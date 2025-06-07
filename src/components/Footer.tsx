@@ -1,0 +1,262 @@
+"use client";
+
+import { Box, Container, Typography, Stack, Link as MuiLink, Divider, IconButton } from "@mui/material";
+import Link from "next/link";
+import {
+  Facebook as FacebookIcon,
+  Instagram as InstagramIcon,
+  Twitter as TwitterIcon,
+  LinkedIn as LinkedInIcon,
+  YouTube as YouTubeIcon,
+} from "@mui/icons-material";
+
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+  return (
+    <Box
+      component="footer"
+      sx={{
+        py: 6,
+        bgcolor: "#2A2E33",
+        color: "white",
+      }}
+    >
+      {/* Main footer content */}
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            justifyContent: "space-between",
+            gap: 4,
+            mb: 4,
+            bgcolor: "white",
+            borderRadius: 2,
+            p: { xs: 3, md: 5 },
+            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {/* Quick Links Column */}
+          <Box sx={{ width: { xs: "100%", md: "33%" } }}>
+            <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
+              QUICK LINKS
+            </Typography>
+            <Stack spacing={1}>
+              <MuiLink component={Link} href="/terms-and-conditions" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                TERMS & CONDITIONS
+              </MuiLink>
+              <MuiLink component={Link} href="/privacy-policy" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                PRIVACY POLICY
+              </MuiLink>
+              <MuiLink component={Link} href="/faq" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                FAQ
+              </MuiLink>
+              <MuiLink component={Link} href="/about" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                ABOUT US
+              </MuiLink>
+              <MuiLink component={Link} href="/contact-us" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                CONTACT US
+              </MuiLink>
+              <MuiLink component={Link} href="/careers" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                CAREERS
+              </MuiLink>
+              <MuiLink component={Link} href="/partner" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                PARTNER WITH US
+              </MuiLink>
+              <MuiLink component={Link} href="/support" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
+                SUPPORT
+              </MuiLink>
+            </Stack>
+          </Box>
+
+          {/* Travel Destinations Column */}
+          <Box sx={{ width: { xs: "100%", md: "33%" } }}>
+            <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
+              TRAVEL DESTINATIONS
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: 1,
+              }}
+            >
+              {[
+                { name: "New York", img: "/destinations/new-york.jpg" },
+                { name: "Paris", img: "/destinations/paris.jpg" },
+                { name: "Tokyo", img: "/destinations/tokyo.jpg" },
+                { name: "London", img: "/destinations/london.jpg" },
+                { name: "Rome", img: "/destinations/rome.jpg" },
+                { name: "Dubai", img: "/destinations/dubai.jpg" },
+                { name: "Sydney", img: "/destinations/sydney.jpg" },
+                { name: "Barcelona", img: "/destinations/barcelona.jpg" },
+              ].map((destination, index) => (
+                <Box key={index} sx={{ mb: 1 }}>
+                  <Box
+                    component={Link}
+                    href={`/destinations/${destination.name.toLowerCase().replace(" ", "-")}`}
+                    sx={{
+                      display: "block",
+                      position: "relative",
+                      height: 70,
+                      borderRadius: 1,
+                      overflow: "hidden",
+                      bgcolor: "#f0f0f0",
+                      "&:hover": {
+                        "& .destination-overlay": {
+                          opacity: 0.7,
+                        },
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        bgcolor: "rgba(0,0,0,0.5)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "opacity 0.3s",
+                      }}
+                      className="destination-overlay"
+                    >
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "white",
+                          fontWeight: "bold",
+                          fontSize: "0.7rem",
+                          textAlign: "center",
+                          px: 1,
+                        }}
+                      >
+                        {destination.name}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Contact Info Column */}
+          <Box sx={{ width: { xs: "100%", md: "33%" } }}>
+            <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
+              CONTACT INFO
+            </Typography>
+            <Stack spacing={2}>
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" color="#2A2E33">
+                  Address:
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  123 Travel Street, Suite 101
+                  <br />
+                  Mumbai, Maharashtra 400001
+                  <br />
+                  India
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" color="#2A2E33">
+                  Customer Support:
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Email: support@zingvel.com
+                  <br />
+                  Phone: +91 98765 43210
+                  <br />
+                  Hours: 24/7 Customer Service
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" color="#2A2E33">
+                  Business Inquiries:
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Email: partners@zingvel.com
+                  <br />
+                  Phone: +91 98765 43211
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+
+        <Box mt={5}>
+          <Typography variant="body2" color="text.secondary" align="center">
+            {currentYear} Zingvel. All rights reserved.
+          </Typography>
+        </Box>
+      </Container>
+
+      {/* Logo and social links */}
+      <Container maxWidth="lg" sx={{ textAlign: "center", mt: 4 }}>
+        <Box
+          component="img"
+          src="/zingvel_logo.png"
+          alt="Zingvel Logo"
+          sx={{
+            height: 40,
+            mb: 2,
+            maxWidth: "100%",
+            objectFit: "contain",
+            filter: "brightness(0) invert(1)", // Make logo white
+          }}
+        />
+
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
+          {[
+            { icon: <FacebookIcon />, href: "https://facebook.com/zingvel" },
+            { icon: <InstagramIcon />, href: "https://instagram.com/zingvel" },
+            { icon: <TwitterIcon />, href: "https://twitter.com/zingvel" },
+            { icon: <LinkedInIcon />, href: "https://linkedin.com/company/zingvel" },
+            { icon: <YouTubeIcon />, href: "https://youtube.com/zingvel" },
+          ].map((social, index) => (
+            <IconButton
+              key={index}
+              component="a"
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "rgba(255,255,255,0.7)",
+                bgcolor: "rgba(255,255,255,0.1)",
+                "&:hover": {
+                  bgcolor: "rgba(255,255,255,0.2)",
+                  color: "white",
+                },
+              }}
+            >
+              {social.icon}
+            </IconButton>
+          ))}
+        </Box>
+
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 3 }} />
+
+        <Typography variant="caption" color="rgba(255,255,255,0.7)">
+          {currentYear} Zingvel.com All rights reserved.
+        </Typography>
+
+        <Typography
+          variant="caption"
+          color="rgba(255,255,255,0.5)"
+          sx={{ display: "block", mt: 1, fontSize: "0.7rem", maxWidth: "800px", mx: "auto" }}
+        >
+          The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content
+          and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is
+          prohibited and punishable by law.
+        </Typography>
+      </Container>
+    </Box>
+  );
+};
+
+export default Footer;
