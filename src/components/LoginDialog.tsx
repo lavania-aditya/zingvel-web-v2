@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
   TextField,
   Button,
-  CircularProgress,
   InputAdornment,
-  IconButton,
   Stack,
+  IconButton,
   Alert,
+  CircularProgress,
   useTheme,
   useMediaQuery,
   styled,
@@ -19,98 +19,124 @@ import { Edit as EditIcon } from "@mui/icons-material";
 import AdaptiveDialog from "./AdaptiveDialog";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-// import login_dialog from "@/assets/login_dialog.svg";
-
-// OTP Input styled component
-const OtpInput = styled(TextField)(({ theme }) => ({
-  "& .MuiInputBase-input": {
-    textAlign: "center",
-    fontSize: "1.5rem",
-    padding: "8px",
-    width: "40px",
-    height: "40px",
-  },
-}));
 
 interface LoginDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
+// Styled OTP input field
+const OtpInput = styled(TextField)(({ theme }) => ({
+  width: "40px",
+  "& .MuiOutlinedInput-root": {
+    borderRadius: theme.shape.borderRadius,
+    height: "48px",
+    width: "48px",
+    padding: 0,
+    textAlign: "center",
+    "& input": {
+      textAlign: "center",
+      padding: 0,
+    },
+  },
+}));
+
 const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
-  // Use theme directly in the useMediaQuery hook to avoid unused variable warning
-  const isMobile = useMediaQuery(useTheme().breakpoints.down("sm"));
-  const { login, verifyOTP, isAuthenticated, isLoading } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { login, verifyOTP, isLoading } = useAuth();
 
-  // State for phone number and OTP
+  // State for phone
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [error, setError] = useState("");
+
+  // State for OTP
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState(["", "", "", ""]);
-  const [error, setError] = useState<string | null>(null);
-  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otpError, setOtpError] = useState("");
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Close dialog if user becomes authenticated
+  // Reset state when dialog opens/closes
   useEffect(() => {
-    if (isAuthenticated) {
-      onClose();
+    if (!open) {
+      // Reset after dialog closes with a delay
+      const timer = setTimeout(() => {
+        setPhoneNumber("");
+        setError("");
+        setOtpSent(false);
+        setOtp(["", "", "", "", "", ""]);
+        setOtpError("");
+      }, 300); // Match with dialog close animation
+
+      return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, onClose]);
+  }, [open]);
 
-  // Validate phone number with regex
-  const isValidPhoneNumber = (phone: string) => {
-    const phoneRegex = /^[6-9]\d{9}$/; // Indian phone number format
-    return phoneRegex.test(phone);
-  };
-
-  // Handle phone number change
+  // Handle phone number input
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, "");
+    const value = e.target.value.replace(/\D/g, ""); // Only allow digits
     if (value.length <= 10) {
       setPhoneNumber(value);
-      setError(null);
+      setError("");
     }
   };
 
   // Handle send OTP
-  const handleSendOTP = () => {
-    if (!isValidPhoneNumber(phoneNumber)) {
+  const handleSendOTP = async () => {
+    if (phoneNumber.length !== 10) {
       setError("Please enter a valid 10-digit phone number");
       return;
     }
 
-    login(phoneNumber);
-    setOtpSent(true);
-    setError(null);
+    try {
+      // Call login API
+      await login(phoneNumber);
+      setOtpSent(true);
+      setError("");
+    } catch {
+      setError("Failed to send OTP. Please try again.");
+    }
   };
 
   // Handle OTP input change
   const handleOtpChange = (index: number, value: string) => {
-    if (value.length <= 1 && /^[0-9]*$/.test(value)) {
+    if (value.length <= 1 && /^\d*$/.test(value)) {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-      setOtpError(null);
+      setOtpError("");
 
       // Auto-focus next input
-      if (value && index < 3) {
-        const nextInput = document.getElementById(`otp-${index + 1}`);
-        if (nextInput) {
-          nextInput.focus();
-        }
+      if (value && index < 5) {
+        otpInputRefs.current[index + 1]?.focus();
       }
     }
   };
 
-  // Handle OTP verification
+  // Handle backspace and arrow keys in OTP input
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      // Focus previous input on backspace if current is empty
+      otpInputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  // Handle verify OTP
   const handleVerifyOTP = async () => {
     const otpValue = otp.join("");
-    if (otpValue.length !== 4) {
-      setOtpError("Please enter a valid 4-digit OTP");
+    if (otpValue.length !== 6) {
+      setOtpError("Please enter a valid 6-digit OTP");
       return;
     }
 
-    const success = await verifyOTP(otpValue);
-    if (!success) {
+    try {
+      await verifyOTP(phoneNumber, otpValue);
+      onClose(); // Close dialog on successful verification
+    } catch {
       setOtpError("Invalid OTP. Please try again.");
     }
   };
@@ -118,86 +144,74 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   // Handle edit phone number
   const handleEditPhoneNumber = () => {
     setOtpSent(false);
-    setOtp(["", "", "", ""]);
-    setOtpError(null);
-  };
-
-  // Handle key press for OTP inputs
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      // Move focus to previous input when backspace is pressed on empty input
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      if (prevInput) {
-        prevInput.focus();
-      }
-    }
+    setOtp(["", "", "", "", "", ""]);
+    setOtpError("");
   };
 
   return (
-    <AdaptiveDialog open={open} onClose={onClose} title="Login / Sign Up" fullWidth maxWidth="md">
+    <AdaptiveDialog 
+      open={open} 
+      onClose={onClose} 
+      title="Login / Signup to" 
+      fullWidth 
+      maxWidth="md"
+      fullScreenMobile={isMobile}
+      backButton={isMobile}
+      hideCloseButton={isMobile}
+    >
       <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 3 }}>
         {/* Left side with login icon (hidden on mobile) */}
         {!isMobile && (
           <Box
             sx={{
-              flex: "0 0 40%",
+              flex: "1 1 40%",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
+              justifyContent: "center",
+              p: 3,
+              bgcolor: "primary.light",
               borderRadius: 1,
-              p: 4,
             }}
           >
             <Image
-              // component="img"
-              src="/login_dialog.svg"
-              alt="Login Dialog"
-              width={400}
-              height={400}
-              // sx={{
-              //   height: 40,
-              //   maxWidth: '100%',
-              //   objectFit: 'contain'
-              // }}
+              src="/login_illustration.svg"
+              alt="Login"
+              width={250}
+              height={250}
+              style={{ maxWidth: "100%", height: "auto" }}
             />
-            {/* <IconButton onClick={toggleDrawer(false)}> */}
-            {/* <CloseIcon /> */}
-            {/* </IconButton> */}
-            {/* </Box> */}
-            {/* <Image src={login_dialog} alt="Login Dialog" width={200} height={200} /> */}
-            {/* <Typography variant="h5" gutterBottom>
-              Welcome Back
+            <Typography variant="h5" sx={{ mt: 3, textAlign: "center" }}>
+              Welcome to ZingVel
             </Typography>
-            <Typography variant="body2" align="center">
-              Log in to access your account and explore amazing travel experiences
-            </Typography> */}
+            <Typography variant="body2" sx={{ mt: 1, textAlign: "center" }}>
+              Your one-stop destination for amazing travel experiences
+            </Typography>
           </Box>
         )}
 
-        {/* Right side with form */}
+        {/* Right side with login form */}
         <Box sx={{ flex: "1 1 60%", p: { xs: 0, md: 2 } }}>
           {!otpSent ? (
             // Phone number input
-            <Box>
-              <Typography variant="h5" gutterBottom>
-                Welcome Back
-              </Typography>
-              <Typography variant="body2" align="center">
-                Log in to access your account and explore amazing travel experiences
-              </Typography>
-              <Typography variant="h6" gutterBottom>
-                Enter your phone number
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                We&apos;ll send you a one-time password to verify your number
+            <Box sx={{ display: "flex", flexDirection: "column", height: isMobile ? "100%" : "auto" }}>
+              {!isMobile && (
+                <>
+                  <Typography variant="h5" gutterBottom>
+                    Welcome Back
+                  </Typography>
+                  <Typography variant="body2" align="center">
+                    Log in to access your account and explore amazing travel experiences
+                  </Typography>
+                </>
+              )}
+              
+              <Typography variant="body1" sx={{ textAlign: "center", mt: isMobile ? 2 : 0, mb: 3 }}>
+                Use Mobile Number or Email to Login/Signup
               </Typography>
 
               <TextField
                 fullWidth
-                // label="Phone Number"
                 variant="outlined"
                 value={phoneNumber}
                 onChange={handlePhoneNumberChange}
@@ -206,33 +220,109 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Image
-                        // component="img"
-                        src="/indian_flag_input_icon.svg"
-                        alt="Indian Flag"
-                        width={25}
-                        height={25}
-                        // sx={{
-                        //   height: 40,
-                        //   maxWidth: '100%',
-                        //   objectFit: 'contain'
-                        // }}
-                      />
-                      {/* <IndianFlag /> */}
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                        <Image
+                          src="/indian_flag_input_icon.svg"
+                          alt="Indian Flag"
+                          width={24}
+                          height={24}
+                        />
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>+91</Typography>
+                      </Box>
                     </InputAdornment>
                   ),
                 }}
-                placeholder="Enter 10-digit number"
-                sx={{ mb: 3 }}
+                placeholder="Enter Mobile No./Email"
+                sx={{ 
+                  mb: 3,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '4px',
+                  }
+                }}
               />
 
-              <Button fullWidth variant="contained" size="large" onClick={handleSendOTP} disabled={phoneNumber.length !== 10 || isLoading}>
-                {isLoading ? <CircularProgress size={24} /> : "Send OTP"}
+              <Button 
+                fullWidth 
+                variant="contained" 
+                size="large" 
+                onClick={handleSendOTP} 
+                disabled={phoneNumber.length !== 10 || isLoading}
+                sx={{
+                  py: 1.5,
+                  borderRadius: '4px',
+                  backgroundColor: theme.palette.primary.main,
+                  '&:disabled': {
+                    backgroundColor: theme.palette.action.disabledBackground,
+                    color: theme.palette.action.disabled
+                  }
+                }}
+              >
+                {isLoading ? <CircularProgress size={24} /> : "CONTINUE"}
               </Button>
+              
+              <Box sx={{ 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center",
+                position: "relative",
+                my: 3
+              }}>
+                <Box sx={{ 
+                  position: "absolute", 
+                  left: 0, 
+                  right: 0, 
+                  height: "1px", 
+                  backgroundColor: theme.palette.divider 
+                }} />
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    px: 2, 
+                    backgroundColor: theme.palette.background.paper, 
+                    position: "relative", 
+                    color: theme.palette.text.secondary 
+                  }}
+                >
+                  Or Login / Signup With
+                </Typography>
+              </Box>
+              
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <IconButton 
+                  sx={{ 
+                    border: "1px solid", 
+                    borderColor: theme.palette.divider,
+                    p: 1.5,
+                    borderRadius: "50%"
+                  }}
+                >
+                  <Image 
+                    src="/google-icon.svg" 
+                    alt="Google" 
+                    width={24} 
+                    height={24}
+                  />
+                </IconButton>
+              </Box>
+              
+              {isMobile && (
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    textAlign: "center", 
+                    mt: "auto", 
+                    mb: 2, 
+                    pt: 4,
+                    color: theme.palette.text.secondary 
+                  }}
+                >
+                  By proceeding, you agree to MakeMyTrip&apos;s <Typography component="span" variant="caption" color="primary">Privacy Policy</Typography>, <Typography component="span" variant="caption" color="primary">User Agreement</Typography> and <Typography component="span" variant="caption" color="primary">T&Cs</Typography>.
+                </Typography>
+              )}
             </Box>
           ) : (
             // OTP verification
-            <Box>
+            <Box sx={{ display: "flex", flexDirection: "column", height: isMobile ? "100%" : "auto" }}>
               <Typography variant="h6" gutterBottom>
                 Enter verification code
               </Typography>
@@ -266,7 +356,18 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
                 ))}
               </Stack>
 
-              <Button fullWidth variant="contained" size="large" onClick={handleVerifyOTP} disabled={otp.some((digit) => !digit) || isLoading}>
+              <Button 
+                fullWidth 
+                variant="contained" 
+                size="large" 
+                onClick={handleVerifyOTP} 
+                disabled={otp.some((digit) => !digit) || isLoading}
+                sx={{
+                  py: 1.5,
+                  borderRadius: '4px',
+                  backgroundColor: theme.palette.primary.main,
+                }}
+              >
                 {isLoading ? <CircularProgress size={24} /> : "Verify & Login"}
               </Button>
 
@@ -276,6 +377,21 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
                   Resend
                 </Button>
               </Typography>
+              
+              {isMobile && (
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    textAlign: "center", 
+                    mt: "auto", 
+                    mb: 2, 
+                    pt: 4,
+                    color: theme.palette.text.secondary 
+                  }}
+                >
+                  By proceeding, you agree to MakeMyTrip&apos;s <Typography component="span" variant="caption" color="primary">Privacy Policy</Typography>, <Typography component="span" variant="caption" color="primary">User Agreement</Typography> and <Typography component="span" variant="caption" color="primary">T&Cs</Typography>.
+                </Typography>
+              )}
             </Box>
           )}
         </Box>

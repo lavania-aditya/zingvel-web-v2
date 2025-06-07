@@ -47,6 +47,9 @@ interface AdaptiveDialogProps {
   fullWidth?: boolean;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   disableBackdropClick?: boolean;
+  fullScreenMobile?: boolean;
+  hideCloseButton?: boolean;
+  backButton?: boolean;
 }
 
 /**
@@ -61,7 +64,10 @@ const AdaptiveDialog = ({
   actions,
   fullWidth = true,
   maxWidth = 'sm',
-  disableBackdropClick = false
+  disableBackdropClick = false,
+  fullScreenMobile = false,
+  hideCloseButton = false,
+  backButton = false
 }: AdaptiveDialogProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -88,25 +94,66 @@ const AdaptiveDialog = ({
         onClose={handleClose}
         PaperProps={{
           sx: {
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            maxHeight: '90vh',
+            borderTopLeftRadius: fullScreenMobile ? 0 : 16,
+            borderTopRightRadius: fullScreenMobile ? 0 : 16,
+            maxHeight: fullScreenMobile ? '100vh' : '90vh',
+            height: fullScreenMobile ? '100vh' : 'auto',
+            overflow: 'hidden'
+          }
+        }}
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: fullScreenMobile ? theme.palette.background.default : 'rgba(0, 0, 0, 0.5)'
           }
         }}
       >
-        <BottomSheetHandle />
-        <Box sx={{ px: 2, pt: 1, pb: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6">{title}</Typography>
-            <IconButton edge="end" color="inherit" onClick={onClose} aria-label="close">
-              <CloseIcon />
-            </IconButton>
+        {!fullScreenMobile && <BottomSheetHandle />}
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            height: fullScreenMobile ? '100%' : 'auto'
+          }}
+        >
+          <Box 
+            sx={{ 
+              px: 2, 
+              py: 1.5, 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            }}
+          >
+            {backButton ? (
+              <IconButton edge="start" color="inherit" onClick={onClose} aria-label="back">
+                <CloseIcon sx={{ transform: 'rotate(45deg)' }} />
+              </IconButton>
+            ) : (
+              <Typography variant="h6">{title}</Typography>
+            )}
+            
+            {!hideCloseButton && (
+              <IconButton edge="end" color="inherit" onClick={onClose} aria-label="close">
+                <CloseIcon />
+              </IconButton>
+            )}
           </Box>
-          <Box sx={{ mb: 2 }}>
+          
+          <Box sx={{ 
+            px: 2, 
+            py: 2, 
+            flex: fullScreenMobile ? 1 : 'none',
+            overflow: 'auto'
+          }}>
             {children}
           </Box>
+          
           {actions && (
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{ 
+              p: 2, 
+              borderTop: `1px solid ${theme.palette.divider}` 
+            }}>
               {actions}
             </Box>
           )}

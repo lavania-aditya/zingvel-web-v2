@@ -4,6 +4,7 @@ import { Box, Container, useMediaQuery, useTheme } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
 import BottomNavigation from "./BottomNavigation";
+import SubNavigation from "./SubNavigation";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ const Layout = ({ children }: LayoutProps) => {
       }}
     >
       <Header />
+      <SubNavigation />
       <Container maxWidth="lg">
         <Box
           component="main"

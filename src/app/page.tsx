@@ -13,7 +13,7 @@ import {
 import CategoryBar from "@/components/CategoryBar";
 import PackageCard from "@/components/PackageCard";
 import Link from "next/link";
-import { categoriesData } from "@/dummyData";
+import { categoriesData, packagesData } from "@/dummyData";
 
 export default function Home() {
   const theme = useTheme();
@@ -134,7 +134,7 @@ export default function Home() {
             msOverflowStyle: "none",
           }}
         >
-          {packages.map((pkg) => (
+          {packagesData.map((pkg) => (
             <Box
               key={pkg.id}
               sx={{
@@ -151,7 +151,7 @@ export default function Home() {
                 flexShrink: 0,
               }}
             >
-              <PackageCard {...pkg} />
+              <PackageCard packageData={pkg} />
             </Box>
           ))}
         </Box>

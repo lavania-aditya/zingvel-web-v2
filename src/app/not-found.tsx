@@ -1,25 +1,17 @@
 "use client";
 
-import { useState } from 'react';
-import { 
-  InputAdornment,
-  Paper,
-} from '@mui/material';
-import { ButtonUi } from '@/components/customUi/ButtonUi';
-import { TextInputUi } from '@/components/customUi/TextInputUi';
-import { 
-  Search as SearchIcon,
-  TravelExplore as ExploreIcon,
-} from '@mui/icons-material';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import ErrorPage from '@/components/ErrorPage';
+import { useState } from "react";
+import { Button, Paper, TextField } from "@mui/material";
+import { TravelExplore as ExploreIcon } from "@mui/icons-material";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import ErrorPage from "@/components/ErrorPage";
 import { ErrorCategory } from "@/utils/errorHandling";
 
 export default function NotFound() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,60 +23,51 @@ export default function NotFound() {
 
   // Create custom search component for the 404 page
   const searchComponent = (
-    <Paper 
+    <Paper
       component="form"
       onSubmit={handleSearch}
       elevation={1}
-      sx={{ 
-        p: '2px 4px', 
-        display: 'flex', 
-        width: '100%', 
+      sx={{
+        p: "2px 4px",
+        display: "flex",
+        width: "100%",
         maxWidth: 500,
         mb: 4,
         mt: 2,
         borderRadius: 2,
       }}
     >
-      <TextInputUi
+      <TextField
         placeholder="Search for destinations or experiences"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         variant="outlined"
         fullWidth
-        sx={{ '& fieldset': { border: 'none' } }}
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon color="action" />
-          </InputAdornment>
-        }
-        endAdornment={
-          searchQuery && (
-            <InputAdornment position="end">
-              <ButtonUi 
-                type="submit" 
-                variant="contained" 
-                size="small"
-                sx={{ borderRadius: 1 }}
-              >
-                Search
-              </ButtonUi>
-            </InputAdornment>
-          )
-        }
+        sx={{ "& fieldset": { border: "none" } }}
+        // startAdornment={
+        //   <InputAdornment position="start">
+        //     <SearchIcon color="action" />
+        //   </InputAdornment>
+        // }
+        // endAdornment={
+        //   searchQuery && (
+        //     <InputAdornment position="end">
+        //       <Button type="submit" variant="contained" size="small" sx={{ borderRadius: 1 }}>
+        //         Search
+        //       </Button>
+        //     </InputAdornment>
+        //   )
+        // }
       />
     </Paper>
   );
-  
+
   // Create custom explore button for destinations
   const exploreButton = (
-    <Link href="/destinations" style={{ textDecoration: 'none' }}>
-      <ButtonUi 
-        variant="outlined" 
-        size="large"
-        startIcon={<ExploreIcon />}
-      >
+    <Link href="/destinations" style={{ textDecoration: "none" }}>
+      <Button variant="outlined" size="large" startIcon={<ExploreIcon />}>
         Explore Destinations
-      </ButtonUi>
+      </Button>
     </Link>
   );
 

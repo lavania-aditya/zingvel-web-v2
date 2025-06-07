@@ -226,7 +226,7 @@ const createAppTheme = (mode: PaletteMode): Theme => {
               backgroundColor: colors.inputDisabled,
             },
             "& .Mui-focused": {
-              backgroundColor: colors.focusBackground,
+              // backgroundColor: colors.focusBackground,
             },
             "& .MuiOutlinedInput-root": {
               borderRadius: "0.625rem",

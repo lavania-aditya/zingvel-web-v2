@@ -129,8 +129,6 @@ export default function SearchPage() {
     setSearchQuery(e.target.value);
   };
 
-
-
   // Handle search submission
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -214,9 +212,9 @@ export default function SearchPage() {
 
   return (
     <Box sx={{ py: 4, px: { xs: 2, sm: 4, md: 6 } }}>
-      <TextUi variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
+      <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
         Search
-      </TextUi>
+      </Typography>
 
       {/* Search Bar */}
       <Paper
@@ -236,9 +234,9 @@ export default function SearchPage() {
             e.preventDefault();
             handleSearch();
           }}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
-          <TextInputUi
+          <TextInput
             fullWidth
             placeholder="Search destinations, hotels, flights..."
             value={searchQuery}
@@ -249,10 +247,10 @@ export default function SearchPage() {
               </InputAdornment>
             }
             variant="outlined"
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '0.625rem'
-              }
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "0.625rem",
+              },
             }}
           />
         </Box>
@@ -262,7 +260,12 @@ export default function SearchPage() {
             Search
           </Button>
 
-          <Button variant="outlined" onClick={() => setFiltersDialogOpen(true)} startIcon={<FilterIcon />} sx={{ whiteSpace: "nowrap", borderRadius: "0.625rem" }}>
+          <Button
+            variant="outlined"
+            onClick={() => setFiltersDialogOpen(true)}
+            startIcon={<FilterIcon />}
+            sx={{ whiteSpace: "nowrap", borderRadius: "0.625rem" }}
+          >
             Filters
           </Button>
         </Box>
@@ -294,7 +297,7 @@ export default function SearchPage() {
         </FormControl>
 
         <Box sx={{ mt: 3, mb: 2 }}>
-          <TextUi sx={{ mb: 1 }}>Price Range</TextUi>
+          <Typography sx={{ mb: 1 }}>Price Range</Typography>
           <Slider
             value={filters.priceRange}
             onChange={(_, value) => handleFilterChange("priceRange", value)}
@@ -304,13 +307,13 @@ export default function SearchPage() {
             step={50}
           />
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <TextUi variant="body2">${filters.priceRange[0]}</TextUi>
-            <TextUi variant="body2">${filters.priceRange[1]}</TextUi>
+            <Typography variant="body2">${filters.priceRange[0]}</Typography>
+            <Typography variant="body2">${filters.priceRange[1]}</Typography>
           </Box>
         </Box>
 
         <Box sx={{ mt: 3, mb: 2 }}>
-          <TextUi sx={{ mb: 1 }}>Minimum Rating</TextUi>
+          <Typography sx={{ mb: 1 }}>Minimum Rating</Typography>
           <Slider
             value={filters.rating}
             onChange={(_, value) => handleFilterChange("rating", value)}
@@ -321,7 +324,7 @@ export default function SearchPage() {
           />
         </Box>
 
-        <TextInputUi
+        <TextInput
           fullWidth
           label="Location"
           variant="outlined"
@@ -332,11 +335,11 @@ export default function SearchPage() {
               <LocationIcon fontSize="small" />
             </InputAdornment>
           }
-          sx={{ 
+          sx={{
             mt: 2,
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '0.625rem'
-            }
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "0.625rem",
+            },
           }}
         />
       </AdaptiveDialog>
@@ -344,9 +347,9 @@ export default function SearchPage() {
       {/* Recent Searches */}
       {searchHistory.length > 0 && (
         <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: "0.625rem" }}>
-          <TextUi variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
             Recent Searches
-          </TextUi>
+          </Typography>
           <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
             {searchHistory.slice(0, 5).map((term, index) => (
               <Chip
@@ -367,10 +370,10 @@ export default function SearchPage() {
         <Grid xs={12}>
           {searchResults.length === 0 ? (
             <Paper elevation={2} sx={{ p: 4, textAlign: "center", borderRadius: "0.625rem" }}>
-              <TextUi variant="h6">No results found</TextUi>
-              <TextUi variant="body1" color="text.secondary">
+              <Typography variant="h6">No results found</Typography>
+              <Typography variant="body1" color="text.secondary">
                 Try adjusting your search or filters
-              </TextUi>
+              </Typography>
             </Paper>
           ) : (
             <Grid container spacing={3}>
@@ -385,9 +388,9 @@ export default function SearchPage() {
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
                       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                        <TextUi variant="h6" sx={{ mb: 1 }}>
+                        <Typography variant="h6" sx={{ mb: 1 }}>
                           {result.name}
-                        </TextUi>
+                        </Typography>
                         <Chip
                           icon={getTypeIcon(result.type)}
                           label={result.type.charAt(0).toUpperCase() + result.type.slice(1)}
@@ -399,23 +402,23 @@ export default function SearchPage() {
 
                       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                         <LocationIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
-                        <TextUi variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="text.secondary">
                           {result.location}
-                        </TextUi>
+                        </Typography>
                       </Box>
 
-                      <TextUi variant="body2" sx={{ mb: 2 }}>
+                      <Typography variant="body2" sx={{ mb: 2 }}>
                         {result.description}
-                      </TextUi>
+                      </Typography>
 
                       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
-                        <TextUi variant="h6" color="primary">
+                        <Typography variant="h6" color="primary">
                           ${result.price}
-                        </TextUi>
+                        </Typography>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <TextUi variant="body2" sx={{ mr: 0.5 }}>
+                          <Typography variant="body2" sx={{ mr: 0.5 }}>
                             {result.rating}
-                          </TextUi>
+                          </Typography>
                           <Chip size="small" label="★" sx={{ bgcolor: "#ffc107", color: "white", height: 20, fontSize: "0.75rem" }} />
                         </Box>
                       </Box>
