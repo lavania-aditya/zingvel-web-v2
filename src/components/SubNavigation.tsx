@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Box, Container, Button, useTheme, useMediaQuery, Switch, Typography, Divider } from "@mui/material";
 import { 
   DarkMode as DarkModeIcon, 
@@ -10,12 +11,19 @@ import {
 import Link from "next/link";
 import { FONTS } from "@/utils/theme";
 import { useThemeContext } from "@/context/ThemeContext";
+import DownloadAppDialog from "./DownloadAppDialog";
 
 const SubNavigation = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const { mode, toggleTheme } = useThemeContext();
   const isDarkMode = mode === "dark";
+  const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDownloadDialogOpen(true);
+  };
 
   // If not desktop, don't render anything
   if (!isDesktop) return null;
@@ -100,8 +108,7 @@ const SubNavigation = () => {
           {/* Right side navigation items */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Button
-              component={Link}
-              href="/download"
+              onClick={handleDownloadClick}
               startIcon={<DownloadIcon fontSize="small" />}
               sx={{ 
                 color: theme.palette.text.primary,
@@ -160,6 +167,12 @@ const SubNavigation = () => {
           </Box>
         </Box>
       </Container>
+      
+      {/* Download App Dialog */}
+      <DownloadAppDialog 
+        open={downloadDialogOpen} 
+        onClose={() => setDownloadDialogOpen(false)} 
+      />
     </Box>
   );
 };

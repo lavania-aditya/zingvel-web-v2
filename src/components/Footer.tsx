@@ -8,6 +8,7 @@ import {
   Twitter as TwitterIcon,
   LinkedIn as LinkedInIcon,
   YouTube as YouTubeIcon,
+  Favorite as HeartIcon,
 } from "@mui/icons-material";
 
 const Footer = () => {
@@ -19,6 +20,7 @@ const Footer = () => {
         py: 6,
         bgcolor: "#2A2E33",
         color: "white",
+        marginTop: 15,
       }}
     >
       {/* Main footer content */}
@@ -34,119 +36,50 @@ const Footer = () => {
             borderRadius: 2,
             p: { xs: 3, md: 5 },
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+            marginTop: -15,
           }}
         >
           {/* Quick Links Column */}
           <Box sx={{ width: { xs: "100%", md: "33%" } }}>
             <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
-              QUICK LINKS
+              Quick Links
             </Typography>
             <Stack spacing={1}>
               <MuiLink component={Link} href="/terms-and-conditions" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                TERMS & CONDITIONS
+                Terms & Conditions
               </MuiLink>
               <MuiLink component={Link} href="/privacy-policy" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                PRIVACY POLICY
+                Privacy Policy
               </MuiLink>
               <MuiLink component={Link} href="/faq" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
                 FAQ
               </MuiLink>
               <MuiLink component={Link} href="/about" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                ABOUT US
+                About Us
               </MuiLink>
               <MuiLink component={Link} href="/contact-us" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                CONTACT US
-              </MuiLink>
-              <MuiLink component={Link} href="/careers" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                CAREERS
+                Contact Us
               </MuiLink>
               <MuiLink component={Link} href="/partner" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                PARTNER WITH US
+                Partner With Us
               </MuiLink>
               <MuiLink component={Link} href="/support" underline="hover" color="text.primary" sx={{ fontSize: "0.875rem" }}>
-                SUPPORT
+                Support
               </MuiLink>
             </Stack>
           </Box>
 
           {/* Travel Destinations Column */}
           <Box sx={{ width: { xs: "100%", md: "33%" } }}>
-            <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
-              TRAVEL DESTINATIONS
+            <Typography sx={{ color: "black" }}>
+              Made with <HeartIcon /> by Zingvel
             </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: 1,
-              }}
-            >
-              {[
-                { name: "New York", img: "/destinations/new-york.jpg" },
-                { name: "Paris", img: "/destinations/paris.jpg" },
-                { name: "Tokyo", img: "/destinations/tokyo.jpg" },
-                { name: "London", img: "/destinations/london.jpg" },
-                { name: "Rome", img: "/destinations/rome.jpg" },
-                { name: "Dubai", img: "/destinations/dubai.jpg" },
-                { name: "Sydney", img: "/destinations/sydney.jpg" },
-                { name: "Barcelona", img: "/destinations/barcelona.jpg" },
-              ].map((destination, index) => (
-                <Box key={index} sx={{ mb: 1 }}>
-                  <Box
-                    component={Link}
-                    href={`/destinations/${destination.name.toLowerCase().replace(" ", "-")}`}
-                    sx={{
-                      display: "block",
-                      position: "relative",
-                      height: 70,
-                      borderRadius: 1,
-                      overflow: "hidden",
-                      bgcolor: "#f0f0f0",
-                      "&:hover": {
-                        "& .destination-overlay": {
-                          opacity: 0.7,
-                        },
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        bgcolor: "rgba(0,0,0,0.5)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "opacity 0.3s",
-                      }}
-                      className="destination-overlay"
-                    >
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: "white",
-                          fontWeight: "bold",
-                          fontSize: "0.7rem",
-                          textAlign: "center",
-                          px: 1,
-                        }}
-                      >
-                        {destination.name}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
           </Box>
 
           {/* Contact Info Column */}
           <Box sx={{ width: { xs: "100%", md: "33%" } }}>
             <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
-              CONTACT INFO
+              Contact Info
             </Typography>
             <Stack spacing={2}>
               <Box>
@@ -154,46 +87,42 @@ const Footer = () => {
                   Address:
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  123 Travel Street, Suite 101
-                  <br />
-                  Mumbai, Maharashtra 400001
-                  <br />
-                  India
+                  Noida, Uttar Pradesh, India
                 </Typography>
               </Box>
 
               <Box>
                 <Typography variant="subtitle2" fontWeight="bold" color="#2A2E33">
-                  Customer Support:
+                  Reach Us:
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Email: support@zingvel.com
                   <br />
-                  Phone: +91 98765 43210
+                  Phone: +91-9457234349
                   <br />
-                  Hours: 24/7 Customer Service
+                  Hours: All days: 9 am to 9 pm
                 </Typography>
               </Box>
 
-              <Box>
+              {/* <Box>
                 <Typography variant="subtitle2" fontWeight="bold" color="#2A2E33">
                   Business Inquiries:
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Email: partners@zingvel.com
+                  Email: support@zingvel.com
                   <br />
                   Phone: +91 98765 43211
                 </Typography>
-              </Box>
+              </Box> */}
             </Stack>
           </Box>
         </Box>
 
-        <Box mt={5}>
+        {/* <Box mt={5}>
           <Typography variant="body2" color="text.secondary" align="center">
             {currentYear} Zingvel. All rights reserved.
           </Typography>
-        </Box>
+        </Box> */}
       </Container>
 
       {/* Logo and social links */}

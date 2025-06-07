@@ -19,6 +19,8 @@ import {
   Stack,
   useTheme,
   useMediaQuery,
+  Typography,
+  TextField,
 } from "@mui/material";
 import { TextUi } from "@/components/customUi/TextUi";
 import { TextInputUi } from "@/components/customUi/TextInputUi";
@@ -236,16 +238,16 @@ export default function SearchPage() {
           }}
           sx={{ width: "100%" }}
         >
-          <TextInput
+          <TextField
             fullWidth
             placeholder="Search destinations, hotels, flights..."
             value={searchQuery}
             onChange={handleSearchChange}
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            }
+            // startAdornment={
+            //   <InputAdornment position="start">
+            //     <SearchIcon />
+            //   </InputAdornment>
+            // }
             variant="outlined"
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -324,17 +326,17 @@ export default function SearchPage() {
           />
         </Box>
 
-        <TextInput
+        <TextField
           fullWidth
           label="Location"
           variant="outlined"
           value={filters.location}
           onChange={(e) => handleFilterChange("location", e.target.value)}
-          startAdornment={
-            <InputAdornment position="start">
-              <LocationIcon fontSize="small" />
-            </InputAdornment>
-          }
+          // startAdornment={
+          //   <InputAdornment position="start">
+          //     <LocationIcon fontSize="small" />
+          //   </InputAdornment>
+          // }
           sx={{
             mt: 2,
             "& .MuiOutlinedInput-root": {

@@ -22,16 +22,12 @@ import {
   Switch,
   Paper,
 } from "@mui/material";
-import {
-  Close as CloseIcon,
-  Search as SearchIcon,
-  // GetApp as DownloadIcon,
-  Person as PersonIcon,
-} from "@mui/icons-material";
+import { Close as CloseIcon, Search as SearchIcon, GetApp as DownloadIcon, Person as PersonIcon } from "@mui/icons-material";
 import Link from "next/link";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import LoginDialog from "./LoginDialog";
+import DownloadAppDialog from "./DownloadAppDialog";
 
 const Header = () => {
   const theme = useTheme();
@@ -39,9 +35,15 @@ const Header = () => {
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("md"));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const { mode, toggleTheme } = useThemeContext();
   const { isAuthenticated } = useAuth();
   const isDarkMode = mode === "dark";
+
+  const handleDownloadClick = () => {
+    setDrawerOpen(false); // Close the drawer first
+    setDownloadDialogOpen(true);
+  };
 
   const handleThemeToggle = () => {
     toggleTheme();
@@ -105,8 +107,8 @@ const Header = () => {
           </ListItemButton>
         </ListItem> */}
         <ListItem disablePadding>
-          <ListItemButton component={Link} href="/download">
-            {/* <DownloadIcon sx={{ mr: 2 }} /> */}
+          <ListItemButton onClick={handleDownloadClick}>
+            <DownloadIcon sx={{ mr: 2 }} />
             <ListItemText primary="Download App" />
           </ListItemButton>
         </ListItem>
@@ -212,7 +214,7 @@ const Header = () => {
                       color: "inherit",
                       display: "flex",
                       alignItems: "center",
-                      gap: 1
+                      gap: 1,
                     }}
                   >
                     <Avatar
@@ -230,7 +232,7 @@ const Header = () => {
                   </Button>
                 ) : (
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={() => setLoginDialogOpen(true)}
                     startIcon={
@@ -242,17 +244,17 @@ const Header = () => {
                           color: "primary.contrastText",
                         }}
                       >
-                        <PersonIcon fontSize="small" />
+                        <PersonIcon fontSize="small" color="primary" />
                       </Avatar>
                     }
                     sx={{
-                      borderRadius: "20px",
-                      px: 2,
-                      py: 0.5,
-                      fontWeight: 500,
+                      // borderRadius: "20px",
+                      px: 2.5,
+                      py: 1,
+                      fontWeight: 700,
                     }}
                   >
-                    Login
+                    Login / Sign Up
                   </Button>
                 )}
               </Box>
@@ -268,6 +270,9 @@ const Header = () => {
 
       {/* Login Dialog */}
       <LoginDialog open={loginDialogOpen} onClose={() => setLoginDialogOpen(false)} />
+
+      {/* Download App Dialog */}
+      <DownloadAppDialog open={downloadDialogOpen} onClose={() => setDownloadDialogOpen(false)} />
     </AppBar>
   );
 };
