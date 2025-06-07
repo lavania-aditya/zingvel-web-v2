@@ -18,18 +18,13 @@ import {
   useMediaQuery,
   useTheme,
   Avatar,
-  Paper,
   Divider,
-  Menu,
-  MenuItem,
   Switch,
+  Paper,
 } from "@mui/material";
 import {
   Close as CloseIcon,
   Search as SearchIcon,
-  KeyboardArrowDown as ChevronDownIcon,
-  DarkMode as DarkModeIcon,
-  LightMode as LightModeIcon,
   // GetApp as DownloadIcon,
   Person as PersonIcon,
 } from "@mui/icons-material";
@@ -37,26 +32,16 @@ import Link from "next/link";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import LoginDialog from "./LoginDialog";
-import { FONTS } from "@/utils/theme";
 
 const Header = () => {
   const theme = useTheme();
   // const router = useRouter();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("md"));
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const { mode, toggleTheme } = useThemeContext();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const isDarkMode = mode === "dark";
-
-  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setUserMenuAnchor(event.currentTarget);
-  };
-
-  const handleUserMenuClose = () => {
-    setUserMenuAnchor(null);
-  };
 
   const handleThemeToggle = () => {
     toggleTheme();
@@ -215,95 +200,61 @@ const Header = () => {
               {/* <IconButton onClick={() => router.push("/search")} sx={{ color: "inherit", mr: 1 }} aria-label="search">
                 <SearchIcon />
               </IconButton> */}
-              <Button component={Link} href="/packages" sx={{ color: "inherit", mr: 1, fontFamily: FONTS.Ubuntu, fontSize: "0.875rem" }}>
-                Packages
-              </Button>
-              <Button component={Link} href="/wanderlists" sx={{ color: "inherit", mr: 1, fontFamily: FONTS.Ubuntu, fontSize: "0.875rem" }}>
-                Wanderlists
-              </Button>
-              <Button component={Link} href="/inquires" sx={{ color: "inherit", mr: 1, fontFamily: FONTS.Ubuntu, fontSize: "0.875rem" }}>
-                Inquires
-              </Button>
+              {/* Navigation items moved to SubNavigation component */}
 
-              {/* User avatar with dropdown */}
-              <Box sx={{ ml: 2 }}>
-                <Button
-                  onClick={handleUserMenuOpen}
-                  sx={{
-                    textTransform: "none",
-                    color: "inherit",
-                  }}
-                  endIcon={<ChevronDownIcon />}
-                >
-                  <Avatar
+              {/* User avatar with login/account button */}
+              <Box sx={{ ml: 2, display: "flex", alignItems: "center" }}>
+                {isAuthenticated ? (
+                  <Button
+                    onClick={() => setLoginDialogOpen(true)}
                     sx={{
-                      width: 32,
-                      height: 32,
-                      bgcolor: "primary.main",
+                      textTransform: "none",
+                      color: "inherit",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1
                     }}
                   >
-                    <PersonIcon fontSize="small" />
-                  </Avatar>
-                </Button>
-                <Menu
-                  anchorEl={userMenuAnchor}
-                  open={Boolean(userMenuAnchor)}
-                  onClose={handleUserMenuClose}
-                  sx={{ mt: 1.5 }}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  <MenuItem onClick={() => setLoginDialogOpen(true)}>
-                    <Button variant="contained" fullWidth>
-                      {isAuthenticated ? "My Account" : "Login / Sign Up"}
-                    </Button>
-                  </MenuItem>
-                  <MenuItem href="/partner">
-                    <Button variant="outlined" fullWidth>
-                      Join as Partner
-                    </Button>
-                  </MenuItem>
-
-                  <MenuItem component={Link} href="/download" onClick={handleUserMenuClose}>
-                    {/* <DownloadIcon fontSize="small" sx={{ mr: 1 }} /> */}
-                    Download App
-                  </MenuItem>
-                  <Divider />
-                  <MenuItem onClick={handleThemeToggle}>
-                    {isDarkMode ? (
-                      <>
-                        <LightModeIcon fontSize="small" sx={{ mr: 1 }} />
-                        Light Theme
-                      </>
-                    ) : (
-                      <>
-                        <DarkModeIcon fontSize="small" sx={{ mr: 1 }} />
-                        Dark Theme
-                      </>
-                    )}
-                    <Switch checked={isDarkMode} onChange={handleThemeToggle} color="primary" size="small" sx={{ ml: "auto" }} />
-                  </MenuItem>
-                  {isAuthenticated && (
-                    <MenuItem
-                      onClick={() => {
-                        handleUserMenuClose();
-                        logout();
-                      }}
+                    <Avatar
                       sx={{
-                        fontWeight: "bold",
-                        color: "primary.main",
+                        width: 32,
+                        height: 32,
+                        bgcolor: "primary.main",
                       }}
                     >
-                      Logout
-                    </MenuItem>
-                  )}
-                </Menu>
+                      <PersonIcon fontSize="small" />
+                    </Avatar>
+                    <Typography variant="body1" sx={{ fontFamily: "inherit" }}>
+                      My Account
+                    </Typography>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setLoginDialogOpen(true)}
+                    startIcon={
+                      <Avatar
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          bgcolor: "inherit",
+                          color: "primary.contrastText",
+                        }}
+                      >
+                        <PersonIcon fontSize="small" />
+                      </Avatar>
+                    }
+                    sx={{
+                      borderRadius: "20px",
+                      px: 2,
+                      py: 0.5,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Login
+                  </Button>
+                )}
               </Box>
             </Box>
           )}

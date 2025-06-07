@@ -1,12 +1,21 @@
 "use client";
 
-import { Box, Container, Button, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Container, Button, useTheme, useMediaQuery, Switch, Typography, Divider } from "@mui/material";
+import { 
+  DarkMode as DarkModeIcon, 
+  LightMode as LightModeIcon,
+  GetApp as DownloadIcon,
+  Handshake as PartnerIcon
+} from "@mui/icons-material";
 import Link from "next/link";
 import { FONTS } from "@/utils/theme";
+import { useThemeContext } from "@/context/ThemeContext";
 
 const SubNavigation = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const { mode, toggleTheme } = useThemeContext();
+  const isDarkMode = mode === "dark";
 
   // If not desktop, don't render anything
   if (!isDesktop) return null;
@@ -28,10 +37,10 @@ const SubNavigation = () => {
           }}
         >
           {/* Left side navigation items */}
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Button
               component={Link}
-              href="/option1"
+              href="/packages"
               sx={{ 
                 color: theme.palette.text.primary,
                 fontFamily: FONTS.Ubuntu,
@@ -44,11 +53,14 @@ const SubNavigation = () => {
                 }
               }}
             >
-              Option 1
+              Packages
             </Button>
+            
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
+            
             <Button
               component={Link}
-              href="/option2"
+              href="/wanderlists"
               sx={{ 
                 color: theme.palette.text.primary,
                 fontFamily: FONTS.Ubuntu,
@@ -61,11 +73,14 @@ const SubNavigation = () => {
                 }
               }}
             >
-              Option 2
+              Wanderlists
             </Button>
+            
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
+            
             <Button
               component={Link}
-              href="/option3"
+              href="/inquires"
               sx={{ 
                 color: theme.palette.text.primary,
                 fontFamily: FONTS.Ubuntu,
@@ -78,15 +93,16 @@ const SubNavigation = () => {
                 }
               }}
             >
-              Option 3
+              Inquires
             </Button>
           </Box>
 
           {/* Right side navigation items */}
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Button
               component={Link}
-              href="/option4"
+              href="/download"
+              startIcon={<DownloadIcon fontSize="small" />}
               sx={{ 
                 color: theme.palette.text.primary,
                 fontFamily: FONTS.Ubuntu,
@@ -99,11 +115,15 @@ const SubNavigation = () => {
                 }
               }}
             >
-              Option 4
+              Download App
             </Button>
+            
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
+            
             <Button
               component={Link}
-              href="/option5"
+              href="/partner"
+              startIcon={<PartnerIcon fontSize="small" />}
               sx={{ 
                 color: theme.palette.text.primary,
                 fontFamily: FONTS.Ubuntu,
@@ -116,25 +136,27 @@ const SubNavigation = () => {
                 }
               }}
             >
-              Option 5
+              Join as Partner
             </Button>
-            <Button
-              component={Link}
-              href="/option6"
-              sx={{ 
-                color: theme.palette.text.primary,
-                fontFamily: FONTS.Ubuntu,
-                fontSize: "0.8rem",
-                fontWeight: 400,
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  color: theme.palette.primary.main,
-                }
-              }}
-            >
-              Option 6
-            </Button>
+            
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
+            
+            <Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
+              {isDarkMode ? (
+                <LightModeIcon fontSize="small" sx={{ mr: 0.5, color: theme.palette.text.secondary }} />
+              ) : (
+                <DarkModeIcon fontSize="small" sx={{ mr: 0.5, color: theme.palette.text.secondary }} />
+              )}
+              <Typography variant="body2" sx={{ mr: 1, fontSize: "0.8rem", color: theme.palette.text.secondary }}>
+                {isDarkMode ? "Light" : "Dark"} Theme
+              </Typography>
+              <Switch
+                checked={isDarkMode}
+                onChange={toggleTheme}
+                color="primary"
+                size="small"
+              />
+            </Box>
           </Box>
         </Box>
       </Container>
