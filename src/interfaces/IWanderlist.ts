@@ -1,5 +1,22 @@
 import { IUser } from "./IUser";
 
+export type ITypeOfTravel = "Adventure" | "Beach" | "Cultural" | "Cruise" | "Film" | "Wildlife" | "Sports";
+export type IPlacesTravelledYear = "1-2" | "3-4" | "5-7" | "8-10" | "12+";
+
+export type ITripGoals =
+  | "Must-see Attractions"
+  | "Great Food"
+  | "Hidden Gems"
+  | "Scenic Thames cruises"
+  | "London by private black cab"
+  | "Pub crawls and tours"
+  | "Iconic Landmarks"
+  | "British Cuisine"
+  | "Art Galleries"
+  | "Theatre and Performing Arts"
+  | "Royal Heritage"
+  | "Historic Pubs and Bars";
+
 export interface ICity {
   id: string;
   city: string;

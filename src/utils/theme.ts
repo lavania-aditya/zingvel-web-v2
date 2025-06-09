@@ -1,9 +1,11 @@
 "use client";
-import { createTheme, responsiveFontSizes, Theme, PaletteMode, PaletteOptions } from "@mui/material/styles";
+import { hexToRgba } from "@/helpers/commonFunctions";
+import { createTheme, responsiveFontSizes, Theme, PaletteMode, PaletteOptions, hexToRgb } from "@mui/material/styles";
 
 export const FONTS = {
-  Ubuntu: "var(--font-ubuntu)",
-  Raleway: "var(--font-raleway)",
+  heading: "var(--font-ubuntu)",
+  subheading: "var(--font-raleway)",
+  text: "var(--font-raleway)",
 };
 
 // Define custom breakpoints for better mobile and tablet support
@@ -21,6 +23,7 @@ const breakpoints = {
 const colors = {
   // Main colors
   primary: "#FCA21A",
+  primary500: "#fca21a99",
   grey: "#DDE2E5",
   green: "#2E7D32",
   red: "#D32F2F",
@@ -40,6 +43,7 @@ const colors = {
     400: "#5E6366",
     500: "#2B2F32", // Darkest
   },
+  white: "#ffffff",
 };
 
 // Define palette options for light and dark modes
@@ -114,67 +118,67 @@ const createAppTheme = (mode: PaletteMode): Theme => {
         fontSize: "2.5rem",
         fontWeight: 700,
         lineHeight: 1.2,
-        fontFamily: FONTS.Ubuntu,
+        fontFamily: FONTS.heading,
       },
       h2: {
         fontSize: "2rem",
         fontWeight: 600,
         lineHeight: 1.3,
-        fontFamily: FONTS.Ubuntu,
+        fontFamily: FONTS.heading,
       },
       h3: {
         fontSize: "1.75rem",
         fontWeight: 600,
         lineHeight: 1.3,
-        fontFamily: FONTS.Ubuntu,
+        fontFamily: FONTS.heading,
       },
       h4: {
         fontSize: "1.5rem",
         fontWeight: 600,
         lineHeight: 1.4,
-        fontFamily: FONTS.Ubuntu,
+        fontFamily: FONTS.heading,
       },
       h5: {
         fontSize: "1.25rem",
         fontWeight: 500,
         lineHeight: 1.4,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.subheading,
       },
       h6: {
         fontSize: "1.125rem",
         fontWeight: 500,
         lineHeight: 1.5,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.subheading,
       },
       subtitle1: {
         fontSize: "1rem",
         lineHeight: 1.5,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.text,
       },
       subtitle2: {
         fontSize: "0.875rem",
         lineHeight: 1.6,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.text,
       },
       body1: {
         fontSize: "1rem",
         lineHeight: 1.5,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.text,
       },
       body2: {
         fontSize: "0.875rem",
         lineHeight: 1.6,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.text,
       },
       button: {
         textTransform: "none",
         fontWeight: 500,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.text,
       },
       caption: {
         fontSize: "0.75rem",
         lineHeight: 1.5,
-        fontFamily: FONTS.Raleway,
+        fontFamily: FONTS.subheading,
       },
     },
     components: {
@@ -198,8 +202,15 @@ const createAppTheme = (mode: PaletteMode): Theme => {
       MuiButton: {
         styleOverrides: {
           root: {
+            color: `${colors.white} !important`,
             borderRadius: "0.625rem",
             padding: "8px 16px",
+            "&:disabled": {
+              backgroundColor: `${colors.primary500} !important`,
+            },
+            "&.MuiButton-outlined": {
+              color: `${colors.black[500]} !important`,
+            },
           },
           contained: {
             boxShadow: "none",
@@ -216,6 +227,12 @@ const createAppTheme = (mode: PaletteMode): Theme => {
           },
           containedError: {
             backgroundColor: colors.red,
+          },
+
+          outlinedPrimary: {
+            // root: {
+            color: `${colors.black} !important`,
+            // },
           },
         },
       },

@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { Box, Container, Button, useTheme, useMediaQuery, Switch, Typography, Divider } from "@mui/material";
-import { 
-  DarkMode as DarkModeIcon, 
-  LightMode as LightModeIcon,
-  GetApp as DownloadIcon,
-  Handshake as PartnerIcon
-} from "@mui/icons-material";
+import { DarkMode as DarkModeIcon, LightMode as LightModeIcon, GetApp as DownloadIcon, Handshake as PartnerIcon } from "@mui/icons-material";
 import Link from "next/link";
 import { FONTS } from "@/utils/theme";
 import { useThemeContext } from "@/context/ThemeContext";
@@ -19,7 +14,7 @@ const SubNavigation = () => {
   const { mode, toggleTheme } = useThemeContext();
   const isDarkMode = mode === "dark";
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
-  
+
   const handleDownloadClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setDownloadDialogOpen(true);
@@ -49,56 +44,56 @@ const SubNavigation = () => {
             <Button
               component={Link}
               href="/packages"
-              sx={{ 
-                color: theme.palette.text.primary,
-                fontFamily: FONTS.Ubuntu,
+              sx={{
+                color: `${theme.palette.common.black} !important`,
+                fontFamily: FONTS.heading,
                 fontSize: "0.8rem",
                 fontWeight: 400,
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: theme.palette.primary.main,
-                }
+                },
               }}
             >
               Packages
             </Button>
-            
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
-            
+
+            <Divider orientation="vertical" flexItem sx={{ alignSelf: "center", height: "1rem", borderColor: theme.palette.grey[500] }} />
+
             <Button
               component={Link}
               href="/wanderlists"
-              sx={{ 
-                color: theme.palette.text.primary,
-                fontFamily: FONTS.Ubuntu,
+              sx={{
+                color: `${theme.palette.common.black} !important`,
+                fontFamily: FONTS.heading,
                 fontSize: "0.8rem",
                 fontWeight: 400,
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: theme.palette.primary.main,
-                }
+                },
               }}
             >
               Wanderlists
             </Button>
-            
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
-            
+
+            <Divider orientation="vertical" flexItem sx={{ alignSelf: "center", height: "1rem", borderColor: theme.palette.grey[500] }} />
+
             <Button
               component={Link}
               href="/inquires"
-              sx={{ 
-                color: theme.palette.text.primary,
-                fontFamily: FONTS.Ubuntu,
+              sx={{
+                color: `${theme.palette.common.black} !important`,
+                fontFamily: FONTS.heading,
                 fontSize: "0.8rem",
                 fontWeight: 400,
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: theme.palette.primary.main,
-                }
+                },
               }}
             >
               Inquires
@@ -110,44 +105,44 @@ const SubNavigation = () => {
             <Button
               onClick={handleDownloadClick}
               startIcon={<DownloadIcon fontSize="small" />}
-              sx={{ 
-                color: theme.palette.text.primary,
-                fontFamily: FONTS.Ubuntu,
+              sx={{
+                color: `${theme.palette.common.black} !important`,
+                fontFamily: FONTS.heading,
                 fontSize: "0.8rem",
                 fontWeight: 400,
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: theme.palette.primary.main,
-                }
+                },
               }}
             >
               Download App
             </Button>
-            
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
-            
+
+            <Divider orientation="vertical" flexItem sx={{ alignSelf: "center", height: "1rem", borderColor: theme.palette.grey[500] }} />
+
             <Button
               component={Link}
               href="/partner"
               startIcon={<PartnerIcon fontSize="small" />}
-              sx={{ 
-                color: theme.palette.text.primary,
-                fontFamily: FONTS.Ubuntu,
+              sx={{
+                color: `${theme.palette.common.black} !important`,
+                fontFamily: FONTS.heading,
                 fontSize: "0.8rem",
                 fontWeight: 400,
                 textTransform: "none",
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: theme.palette.primary.main,
-                }
+                },
               }}
             >
               Join as Partner
             </Button>
-            
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: "60%" }} />
-            
+
+            <Divider orientation="vertical" flexItem sx={{ alignSelf: "center", height: "1rem", borderColor: theme.palette.grey[500] }} />
+
             <Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
               {isDarkMode ? (
                 <LightModeIcon fontSize="small" sx={{ mr: 0.5, color: theme.palette.text.secondary }} />
@@ -155,24 +150,16 @@ const SubNavigation = () => {
                 <DarkModeIcon fontSize="small" sx={{ mr: 0.5, color: theme.palette.text.secondary }} />
               )}
               <Typography variant="body2" sx={{ mr: 1, fontSize: "0.8rem", color: theme.palette.text.secondary }}>
-                {isDarkMode ? "Light" : "Dark"} Theme
+                {isDarkMode ? "Light" : "Dark"}
               </Typography>
-              <Switch
-                checked={isDarkMode}
-                onChange={toggleTheme}
-                color="primary"
-                size="small"
-              />
+              <Switch checked={isDarkMode} onChange={toggleTheme} color="primary" size="small" />
             </Box>
           </Box>
         </Box>
       </Container>
-      
+
       {/* Download App Dialog */}
-      <DownloadAppDialog 
-        open={downloadDialogOpen} 
-        onClose={() => setDownloadDialogOpen(false)} 
-      />
+      <DownloadAppDialog open={downloadDialogOpen} onClose={() => setDownloadDialogOpen(false)} />
     </Box>
   );
 };

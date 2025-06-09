@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
   TextField,
   Button,
   InputAdornment,
-  Stack,
   IconButton,
   Alert,
   CircularProgress,
@@ -15,31 +14,17 @@ import {
   useMediaQuery,
   styled,
 } from "@mui/material";
-import { Edit as EditIcon } from "@mui/icons-material";
+import { Edit as EditIcon, PhoneIphone as PhoneIcon, Looks6 as OtpIcon } from "@mui/icons-material";
 import AdaptiveDialog from "./AdaptiveDialog";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import { TextInputUi } from "./TextInputUi";
+import { FONTS } from "@/utils/theme";
 
 interface LoginDialogProps {
   open: boolean;
   onClose: () => void;
 }
-
-// Styled OTP input field
-const OtpInput = styled(TextField)(({ theme }) => ({
-  width: "40px",
-  "& .MuiOutlinedInput-root": {
-    borderRadius: theme.shape.borderRadius,
-    height: "48px",
-    width: "48px",
-    padding: 0,
-    textAlign: "center",
-    "& input": {
-      textAlign: "center",
-      padding: 0,
-    },
-  },
-}));
 
 const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   const theme = useTheme();
@@ -50,11 +35,14 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
 
+  // State for OTP timer
+  const [otpTimer, setOtpTimer] = useState(120); // 2 minutes in seconds
+  const [timerActive, setTimerActive] = useState(false);
+
   // State for OTP
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
-  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Reset state when dialog opens/closes
   useEffect(() => {
@@ -64,13 +52,32 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
         setPhoneNumber("");
         setError("");
         setOtpSent(false);
-        setOtp(["", "", "", "", "", ""]);
+        setOtp("");
         setOtpError("");
+        setOtpTimer(120);
+        setTimerActive(false);
       }, 300); // Match with dialog close animation
 
       return () => clearTimeout(timer);
     }
   }, [open]);
+
+  // OTP timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (timerActive && otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else if (otpTimer === 0) {
+      setTimerActive(false);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [timerActive, otpTimer]);
 
   // Handle phone number input
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,9 +97,16 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
 
     try {
       // Call login API
-      await login(phoneNumber);
-      setOtpSent(true);
-      setError("");
+      const success = await login(phoneNumber);
+      if (success) {
+        setOtpSent(true);
+        setError("");
+        // Start the timer
+        setOtpTimer(120);
+        setTimerActive(true);
+      } else {
+        setError("Failed to send OTP. Please try again.");
+      }
     } catch {
       setError("Failed to send OTP. Please try again.");
     }
@@ -101,41 +115,28 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   // Handle OTP input change
   const handleOtpChange = (index: number, value: string) => {
     if (value.length <= 1 && /^\d*$/.test(value)) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
+      setOtp(value);
       setOtpError("");
 
       // Auto-focus next input
-      if (value && index < 5) {
-        otpInputRefs.current[index + 1]?.focus();
-      }
-    }
-  };
-
-  // Handle backspace and arrow keys in OTP input
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      // Focus previous input on backspace if current is empty
-      otpInputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowLeft" && index > 0) {
-      otpInputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < 5) {
-      otpInputRefs.current[index + 1]?.focus();
     }
   };
 
   // Handle verify OTP
   const handleVerifyOTP = async () => {
-    const otpValue = otp.join("");
-    if (otpValue.length !== 6) {
+    if (otp.length !== 6) {
       setOtpError("Please enter a valid 6-digit OTP");
       return;
     }
 
     try {
-      await verifyOTP(phoneNumber, otpValue);
-      onClose(); // Close dialog on successful verification
+      // Verify OTP
+      const success = await verifyOTP(phoneNumber, otpValue);
+      if (success) {
+        onClose(); // Close dialog on successful verification
+      } else {
+        setOtpError("Invalid OTP. Please try again.");
+      }
     } catch {
       setOtpError("Invalid OTP. Please try again.");
     }
@@ -144,182 +145,174 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   // Handle edit phone number
   const handleEditPhoneNumber = () => {
     setOtpSent(false);
-    setOtp(["", "", "", "", "", ""]);
+    setOtp("");
     setOtpError("");
+    setTimerActive(false);
+    setOtpTimer(120);
+  };
+
+  // Format time as MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const handleGoogleLogin = () => {
+    console.log("Google login clicked");
   };
 
   return (
-    <AdaptiveDialog 
-      open={open} 
-      onClose={onClose} 
-      title="Login / Signup to" 
-      fullWidth 
-      maxWidth="md"
-      fullScreenMobile={isMobile}
-      backButton={isMobile}
-      hideCloseButton={isMobile}
+    <AdaptiveDialog
+      open={open}
+      onClose={onClose}
+      title="Welcome to ZingVel"
+      fullWidth
+      maxWidth="sm"
+      // fullScreenMobile={isMobile}
+      backButton={true}
+      hideCloseButton={true}
+      // hideTitleBar={true}
     >
       <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 3 }}>
-        {/* Left side with login icon (hidden on mobile) */}
-        {!isMobile && (
-          <Box
-            sx={{
-              flex: "1 1 40%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              p: 3,
-              bgcolor: "primary.light",
-              borderRadius: 1,
-            }}
-          >
-            <Image
-              src="/login_illustration.svg"
-              alt="Login"
-              width={250}
-              height={250}
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-            <Typography variant="h5" sx={{ mt: 3, textAlign: "center" }}>
-              Welcome to ZingVel
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 1, textAlign: "center" }}>
-              Your one-stop destination for amazing travel experiences
-            </Typography>
-          </Box>
-        )}
-
         {/* Right side with login form */}
+
         <Box sx={{ flex: "1 1 60%", p: { xs: 0, md: 2 } }}>
-          {!otpSent ? (
-            // Phone number input
-            <Box sx={{ display: "flex", flexDirection: "column", height: isMobile ? "100%" : "auto" }}>
-              {!isMobile && (
-                <>
-                  <Typography variant="h5" gutterBottom>
-                    Welcome Back
-                  </Typography>
-                  <Typography variant="body2" align="center">
-                    Log in to access your account and explore amazing travel experiences
-                  </Typography>
-                </>
-              )}
-              
-              <Typography variant="body1" sx={{ textAlign: "center", mt: isMobile ? 2 : 0, mb: 3 }}>
-                Use Mobile Number or Email to Login/Signup
-              </Typography>
+          <Typography variant="h4" sx={{ mt: 3, textAlign: "center" }}>
+            Welcome to ZingVel
+          </Typography>
+          <Typography variant="h6" sx={{ mt: 1, textAlign: "center" }}>
+            Your one-stop destination for amazing travel experiences
+          </Typography>
 
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={phoneNumber}
-                onChange={handlePhoneNumberChange}
-                error={!!error}
-                helperText={error}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <Image
-                          src="/indian_flag_input_icon.svg"
-                          alt="Indian Flag"
-                          width={24}
-                          height={24}
-                        />
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>+91</Typography>
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder="Enter Mobile No./Email"
-                sx={{ 
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '4px',
-                  }
-                }}
-              />
+          <Box sx={{ display: "flex", flexDirection: "column", height: isMobile ? "100%" : "auto" }}>
+            <Typography variant="subtitle1" sx={{ textAlign: "center", mt: isMobile ? 2 : 0, mb: 3 }}>
+              Use Mobile Number or Email to continue
+            </Typography>
 
-              <Button 
-                fullWidth 
-                variant="contained" 
-                size="large" 
-                onClick={handleSendOTP} 
-                disabled={phoneNumber.length !== 10 || isLoading}
-                sx={{
-                  py: 1.5,
-                  borderRadius: '4px',
-                  backgroundColor: theme.palette.primary.main,
-                  '&:disabled': {
-                    backgroundColor: theme.palette.action.disabledBackground,
-                    color: theme.palette.action.disabled
-                  }
-                }}
-              >
-                {isLoading ? <CircularProgress size={24} /> : "CONTINUE"}
-              </Button>
-              
-              <Box sx={{ 
-                display: "flex", 
-                alignItems: "center", 
+            <TextInputUi
+              label="Phone Number"
+              value={phoneNumber}
+              handleValueChange={handlePhoneNumberChange}
+              errorMessage={error}
+              startAdornment={
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <PhoneIcon />{" "}
+                  <Typography variant="subtitle2" sx={{ fontFamily: FONTS.text, fontSize: "1rem" }}>
+                    +91
+                  </Typography>
+                </Box>
+              }
+              placeholder="8650XXXXXX"
+            />
+
+            <Button
+              fullWidth
+              variant="contained"
+              size="large"
+              onClick={handleSendOTP}
+              disabled={phoneNumber.length !== 10 || isLoading}
+              sx={{
+                py: 1.5,
+                borderRadius: "4px",
+                backgroundColor: theme.palette.primary.main,
+                "&:disabled": {
+                  backgroundColor: theme.palette.action.disabledBackground,
+                  color: theme.palette.action.disabled,
+                },
+              }}
+            >
+              {isLoading ? <CircularProgress size={24} /> : "CONTINUE"}
+            </Button>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
                 justifyContent: "center",
                 position: "relative",
-                my: 3
-              }}>
-                <Box sx={{ 
-                  position: "absolute", 
-                  left: 0, 
-                  right: 0, 
-                  height: "1px", 
-                  backgroundColor: theme.palette.divider 
-                }} />
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    px: 2, 
-                    backgroundColor: theme.palette.background.paper, 
-                    position: "relative", 
-                    color: theme.palette.text.secondary 
-                  }}
-                >
-                  Or Login / Signup With
-                </Typography>
-              </Box>
-              
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <IconButton 
-                  sx={{ 
-                    border: "1px solid", 
-                    borderColor: theme.palette.divider,
-                    p: 1.5,
-                    borderRadius: "50%"
-                  }}
-                >
-                  <Image 
-                    src="/google-icon.svg" 
-                    alt="Google" 
-                    width={24} 
-                    height={24}
-                  />
-                </IconButton>
-              </Box>
-              
-              {isMobile && (
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    textAlign: "center", 
-                    mt: "auto", 
-                    mb: 2, 
-                    pt: 4,
-                    color: theme.palette.text.secondary 
-                  }}
-                >
-                  By proceeding, you agree to MakeMyTrip&apos;s <Typography component="span" variant="caption" color="primary">Privacy Policy</Typography>, <Typography component="span" variant="caption" color="primary">User Agreement</Typography> and <Typography component="span" variant="caption" color="primary">T&Cs</Typography>.
-                </Typography>
-              )}
+                my: 3,
+              }}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  height: "1px",
+                  backgroundColor: theme.palette.divider,
+                }}
+              />
+              <Typography
+                variant="body2"
+                sx={{
+                  px: 2,
+                  backgroundColor: theme.palette.background.paper,
+                  position: "relative",
+                  color: theme.palette.text.secondary,
+                }}
+              >
+                Or
+              </Typography>
             </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: `1px solid ${theme.palette.divider}`,
+                p: 1,
+                borderRadius: 2,
+                cursor: "pointer",
+              }}
+              onClick={handleGoogleLogin}
+            >
+              {/* <IconButton
+                  sx={{
+                    // border: `1px solid ${theme.palette.primary.main}`,
+                    p: 1.5,
+                    borderRadius: "50%",
+                  }}
+                > */}
+              <Image src="/google-icon.svg" alt="Google" width={24} height={24} />
+              {/* </IconButton> */}
+              <Typography variant="subtitle2" color={theme.palette.text.disabled} sx={{ ml: 2 }}>
+                Sign In with Google
+              </Typography>
+            </Box>
+
+            {isMobile && (
+              <Typography
+                variant="caption"
+                sx={{
+                  textAlign: "center",
+                  mt: "auto",
+                  mb: 2,
+                  pt: 4,
+                  color: theme.palette.text.secondary,
+                }}
+              >
+                By proceeding, you agree to MakeMyTrip&apos;s{" "}
+                <Typography component="span" variant="caption" color="primary">
+                  Privacy Policy
+                </Typography>
+                ,{" "}
+                <Typography component="span" variant="caption" color="primary">
+                  User Agreement
+                </Typography>{" "}
+                and{" "}
+                <Typography component="span" variant="caption" color="primary">
+                  T&Cs
+                </Typography>
+                .
+              </Typography>
+            )}
+          </Box>
+
+          {!otpSent ? (
+            // Ph<one number input
+            <></>
           ) : (
             // OTP verification
             <Box sx={{ display: "flex", flexDirection: "column", height: isMobile ? "100%" : "auto" }}>
@@ -327,13 +320,23 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
                 Enter verification code
               </Typography>
 
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Sent to: +91 {phoneNumber}
-                </Typography>
-                <IconButton size="small" onClick={handleEditPhoneNumber} sx={{ ml: 1 }}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
+              {/* Phone number display (disabled) */}
+              <TextField
+                fullWidth
+                label="Phone Number"
+                value={phoneNumber}
+                disabled
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                }}
+                sx={{ mb: 2 }}
+              />
+
+              {/* Edit phone number link */}
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
+                <Button variant="text" size="small" onClick={handleEditPhoneNumber} startIcon={<EditIcon fontSize="small" />}>
+                  Edit number
+                </Button>
               </Box>
 
               {otpError && (
@@ -342,7 +345,21 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
                 </Alert>
               )}
 
-              <Stack direction="row" spacing={1} justifyContent="center" sx={{ my: 3 }}>
+              <TextInputUi
+                label="Enter OTP"
+                value={otp}
+                handleValueChange={handleOtpChange}
+                errorMessage={otpError}
+                startAdornment={
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <OtpIcon />
+                  </Box>
+                }
+                placeholder="8650XXXXXX"
+              />
+
+              {/* OTP input */}
+              {/* <Stack direction="row" spacing={1} justifyContent="center" sx={{ my: 3 }}>
                 {otp.map((digit, index) => (
                   <OtpInput
                     key={index}
@@ -352,19 +369,30 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
                     inputProps={{ maxLength: 1, inputMode: "numeric" }}
                     autoFocus={index === 0}
+                    inputRef={(el) => {
+                      if (el) otpInputRefs.current[index] = el;
+                    }}
                   />
                 ))}
-              </Stack>
+              </Stack> */}
 
-              <Button 
-                fullWidth 
-                variant="contained" 
-                size="large" 
-                onClick={handleVerifyOTP} 
+              {/* Timer display */}
+              {timerActive && (
+                <Typography variant="body2" align="center" color="text.secondary" sx={{ mb: 1 }}>
+                  Resend OTP in {formatTime(otpTimer)}
+                </Typography>
+              )}
+
+              {/* Verify button */}
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleVerifyOTP}
                 disabled={otp.some((digit) => !digit) || isLoading}
                 sx={{
                   py: 1.5,
-                  borderRadius: '4px',
+                  borderRadius: "4px",
                   backgroundColor: theme.palette.primary.main,
                 }}
               >
@@ -373,23 +401,35 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
 
               <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                 Didn&apos;t receive the code?{" "}
-                <Button variant="text" size="small" onClick={handleSendOTP} disabled={isLoading}>
+                <Button variant="text" size="small" onClick={handleSendOTP} disabled={isLoading || timerActive}>
                   Resend
                 </Button>
               </Typography>
-              
+
               {isMobile && (
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    textAlign: "center", 
-                    mt: "auto", 
-                    mb: 2, 
+                <Typography
+                  variant="caption"
+                  sx={{
+                    textAlign: "center",
+                    mt: "auto",
+                    mb: 2,
                     pt: 4,
-                    color: theme.palette.text.secondary 
+                    color: theme.palette.text.secondary,
                   }}
                 >
-                  By proceeding, you agree to MakeMyTrip&apos;s <Typography component="span" variant="caption" color="primary">Privacy Policy</Typography>, <Typography component="span" variant="caption" color="primary">User Agreement</Typography> and <Typography component="span" variant="caption" color="primary">T&Cs</Typography>.
+                  By proceeding, you agree to MakeMyTrip&apos;s{" "}
+                  <Typography component="span" variant="caption" color="primary">
+                    Privacy Policy
+                  </Typography>
+                  ,{" "}
+                  <Typography component="span" variant="caption" color="primary">
+                    User Agreement
+                  </Typography>{" "}
+                  and{" "}
+                  <Typography component="span" variant="caption" color="primary">
+                    T&Cs
+                  </Typography>
+                  .
                 </Typography>
               )}
             </Box>

@@ -1,21 +1,39 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { sendOtpService, verifyOtpSerive, getUserFromTokenApi } from '@/services/SUser';
+import Cookies from 'js-cookie';
 
 interface User {
   id: string;
-  phoneNumber: string;
-  name?: string;
-  email?: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  countryCode: number;
+  phNumber: string;
+  phVerified: boolean;
+  avatarImage?: string;
+  email: string | null;
+  emailVerified: boolean;
+  bio: string | null;
+  gender: string;
+  typeOfTravel: string[] | null;
+  placesTravelledYear: string[] | null;
+  dateOfBirth: string | null;
+  totalWanderlist?: number;
+  totalPost?: number;
+  totalTravel?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (phoneNumber: string) => void;
+  login: (phoneNumber: string) => Promise<boolean>;
   logout: () => void;
-  verifyOTP: (otp: string) => Promise<boolean>;
+  verifyOTP: (phoneNumber: string, otp: string, firstName?: string, lastName?: string, email?: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,55 +49,79 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPhoneNumber, setCurrentPhoneNumber] = useState<string>('');
 
-  // Check if user is already logged in from localStorage
+  // Check if user is already logged in from auth token
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
+    const checkUserAuth = async () => {
+      const authToken = Cookies.get('AUTH_TOKEN');
+      if (authToken) {
         try {
-          setUser(JSON.parse(storedUser));
+          setIsLoading(true);
+          // Try to get user from cookies first
+          const userFromCookies = Cookies.get('AUTH_USER');
+          if (userFromCookies) {
+            try {
+              const parsedUser = JSON.parse(userFromCookies);
+              setUser(parsedUser);
+              setIsLoading(false);
+              return;
+            } catch {
+              console.error('Failed to parse user from cookies');
+            }
+          }
+          
+          // If no user in cookies or parsing failed, fetch from API
+          const response = await getUserFromTokenApi();
+          if (response && response.data) {
+            setUser(response.data);
+            // Store user in cookies
+            Cookies.set('AUTH_USER', JSON.stringify(response.data), { expires: 7 });
+          }
         } catch (error) {
-          console.error('Failed to parse stored user data:', error);
-          localStorage.removeItem('user');
+          console.error('Failed to get user data:', error);
+          Cookies.remove('AUTH_TOKEN');
+          Cookies.remove('AUTH_USER');
+        } finally {
+          setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    }
+    };
+    
+    checkUserAuth();
   }, []);
 
-  const login = (phoneNumber: string) => {
-    // Store the phone number for OTP verification
-    setCurrentPhoneNumber(phoneNumber);
-    
-    // In a real app, this would call an API to send OTP
-    console.log(`Sending OTP to ${phoneNumber}`);
-    
-    // For demo purposes, we'll just log the "OTP"
-    console.log('Demo OTP: 1234');
+  const login = async (phoneNumber: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      
+      // Call the send OTP API
+      await sendOtpService(91, phoneNumber);
+      setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error('Failed to send OTP:', error);
+      setIsLoading(false);
+      return false;
+    }
   };
 
-  const verifyOTP = async (otp: string): Promise<boolean> => {
-    // In a real app, this would verify the OTP with an API
+  const verifyOTP = async (phoneNumber: string, otp: string): Promise<boolean> => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the verify OTP API
+      const response = await verifyOtpSerive(91, phoneNumber, otp);
       
-      // For demo purposes, any 4-digit OTP is valid
-      if (otp.length === 4) {
-        const newUser = {
-          id: `user_${Date.now()}`,
-          phoneNumber: currentPhoneNumber,
-        };
+      if (response && response.data) {
+        // Set user data and auth token
+        setUser(response.data.user);
         
-        setUser(newUser);
-        
-        // Store in localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('user', JSON.stringify(newUser));
+        // Store auth token and user data in cookies
+        if (response.data.token) {
+          Cookies.set('AUTH_TOKEN', response.data.token, { expires: 7 }); // 7 days expiry
+          Cookies.set('AUTH_USER', JSON.stringify(response.data.user), { expires: 7 }); // 7 days expiry
         }
         
         setIsLoading(false);
@@ -97,9 +139,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('user');
-    }
+    Cookies.remove('AUTH_TOKEN');
+    Cookies.remove('AUTH_USER');
   };
 
   return (

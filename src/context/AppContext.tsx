@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 // Define cart item type
 interface CartItem {
@@ -22,6 +23,8 @@ interface AppContextState {
     isLoggedIn: boolean;
     name: string | null;
     email: string | null;
+    id?: string | null;
+    avatarImage?: string | null;
   };
   // Travel preferences
   preferences: {
@@ -41,7 +44,7 @@ interface AppContextState {
 
 // Define the shape of our context actions/methods
 interface AppContextActions {
-  login: (name: string, email: string) => void;
+  syncWithAuthContext: () => void;
   logout: () => void;
   updatePreferences: (preferences: Partial<AppContextState['preferences']>) => void;
   addToFavorites: (destinationId: string) => void;
@@ -81,26 +84,64 @@ const initialState: AppContextState = {
 // Provider component
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<AppContextState>(initialState);
+  const { user: authUser, isAuthenticated, logout: authLogout } = useAuth();
+
+  // Sync with AuthContext whenever it changes
+  useEffect(() => {
+    if (isAuthenticated && authUser) {
+      setState(prev => ({
+        ...prev,
+        user: {
+          isLoggedIn: true,
+          name: `${authUser.firstName} ${authUser.lastName}`,
+          email: authUser.email,
+          id: authUser.id,
+          avatarImage: authUser.avatarImage,
+        },
+      }));
+    } else {
+      setState(prev => ({
+        ...prev,
+        user: {
+          isLoggedIn: false,
+          name: null,
+          email: null,
+          id: null,
+          avatarImage: null,
+        },
+      }));
+    }
+  }, [isAuthenticated, authUser]);
 
   // Actions
-  const login = (name: string, email: string) => {
-    setState(prev => ({
-      ...prev,
-      user: {
-        isLoggedIn: true,
-        name,
-        email,
-      },
-    }));
+  const syncWithAuthContext = () => {
+    if (isAuthenticated && authUser) {
+      setState(prev => ({
+        ...prev,
+        user: {
+          isLoggedIn: true,
+          name: `${authUser.firstName} ${authUser.lastName}`,
+          email: authUser.email,
+          id: authUser.id,
+          avatarImage: authUser.avatarImage,
+        },
+      }));
+    }
   };
 
   const logout = () => {
+    // Call AuthContext logout
+    authLogout();
+    
+    // Update local state
     setState(prev => ({
       ...prev,
       user: {
         isLoggedIn: false,
         name: null,
         email: null,
+        id: null,
+        avatarImage: null,
       },
     }));
   };
@@ -186,7 +227,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   // Combine state and actions
   const value: AppContextValue = {
     ...state,
-    login,
+    syncWithAuthContext,
     logout,
     updatePreferences,
     addToFavorites,

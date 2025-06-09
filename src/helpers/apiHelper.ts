@@ -21,8 +21,8 @@ interface IApiHelper {
 }
 
 const BASE_URLS = {
-  wanderlist: "https://wanderlist.zingvel.com/api",
-  packages: "https://packages.zingvel.com/api",
+  wanderlist: "https://api.zingvel.com/api",
+  packages: "http://localhost:8082/api",
 };
 
 let logoutFn: (() => void) | null = null;
@@ -55,10 +55,10 @@ const handleResponse = async (res: Response): Promise<any> => {
     }
 
     if (!res.ok) {
-      const error = { 
-        status: res.status, 
-        data, 
-        message: isJson && typeof data === 'object' && data.message ? data.message : `API Error: ${res.status}` 
+      const error = {
+        status: res.status,
+        data,
+        message: isJson && typeof data === "object" && data.message ? data.message : `API Error: ${res.status}`,
       };
       throw error;
     }
@@ -83,7 +83,7 @@ const makeRequest = async (
 
     // Get auth token
     const authToken = token || getAuthToken(ctx);
-    
+
     // Prepare headers
     const finalHeaders: HeadersInit = {
       ...headers,
@@ -96,7 +96,7 @@ const makeRequest = async (
       method,
       headers: finalHeaders,
       // Add credentials to handle cookies properly
-      credentials: 'include',
+      credentials: "include",
     };
 
     // Add body for non-GET requests

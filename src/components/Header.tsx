@@ -247,12 +247,7 @@ const Header = () => {
                         <PersonIcon fontSize="small" color="primary" />
                       </Avatar>
                     }
-                    sx={{
-                      // borderRadius: "20px",
-                      px: 2.5,
-                      py: 1,
-                      fontWeight: 700,
-                    }}
+                    sx={{}}
                   >
                     Login / Sign Up
                   </Button>
