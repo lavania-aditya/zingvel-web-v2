@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { sendOtpService, verifyOtpSerive, getUserFromTokenApi } from '@/services/SUser';
-import Cookies from 'js-cookie';
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { sendOtpService, verifyOtpSerive, getUserFromTokenApi } from "@/services/SUser";
+import Cookies from "js-cookie";
 
 interface User {
   id: string;
@@ -30,7 +30,6 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
   login: (phoneNumber: string) => Promise<boolean>;
   logout: () => void;
   verifyOTP: (phoneNumber: string, otp: string, firstName?: string, lastName?: string, email?: string) => Promise<boolean>;
@@ -41,106 +40,90 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Check if user is already logged in from auth token
   useEffect(() => {
     const checkUserAuth = async () => {
-      const authToken = Cookies.get('AUTH_TOKEN');
+      const authToken = Cookies.get("AUTH_TOKEN");
       if (authToken) {
         try {
-          setIsLoading(true);
           // Try to get user from cookies first
-          const userFromCookies = Cookies.get('AUTH_USER');
+          const userFromCookies = Cookies.get("AUTH_USER");
           if (userFromCookies) {
             try {
               const parsedUser = JSON.parse(userFromCookies);
               setUser(parsedUser);
-              setIsLoading(false);
               return;
             } catch {
-              console.error('Failed to parse user from cookies');
+              console.error("Failed to parse user from cookies");
             }
           }
-          
+
           // If no user in cookies or parsing failed, fetch from API
           const response = await getUserFromTokenApi();
           if (response && response.data) {
             setUser(response.data);
             // Store user in cookies
-            Cookies.set('AUTH_USER', JSON.stringify(response.data), { expires: 7 });
+            Cookies.set("AUTH_USER", JSON.stringify(response.data), { expires: 7 });
           }
         } catch (error) {
-          console.error('Failed to get user data:', error);
-          Cookies.remove('AUTH_TOKEN');
-          Cookies.remove('AUTH_USER');
-        } finally {
-          setIsLoading(false);
+          console.error("Failed to get user data:", error);
+          Cookies.remove("AUTH_TOKEN");
+          Cookies.remove("AUTH_USER");
         }
-      } else {
-        setIsLoading(false);
       }
     };
-    
+
     checkUserAuth();
   }, []);
 
   const login = async (phoneNumber: string): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      
       // Call the send OTP API
       await sendOtpService(91, phoneNumber);
-      setIsLoading(false);
       return true;
     } catch (error) {
-      console.error('Failed to send OTP:', error);
-      setIsLoading(false);
+      console.error("Failed to send OTP:", error);
       return false;
     }
   };
 
   const verifyOTP = async (phoneNumber: string, otp: string): Promise<boolean> => {
-    setIsLoading(true);
-    
     try {
       // Call the verify OTP API
       const response = await verifyOtpSerive(91, phoneNumber, otp);
-      
-      if (response && response.data) {
+      debugger;
+      if (response && response.user && response.token) {
         // Set user data and auth token
-        setUser(response.data.user);
-        
+        setUser(response.user);
+
         // Store auth token and user data in cookies
-        if (response.data.token) {
-          Cookies.set('AUTH_TOKEN', response.data.token, { expires: 7 }); // 7 days expiry
-          Cookies.set('AUTH_USER', JSON.stringify(response.data.user), { expires: 7 }); // 7 days expiry
+        if (response.token) {
+          Cookies.set("AUTH_TOKEN", response.token, { expires: 7 }); // 7 days expiry
+          Cookies.set("AUTH_USER", JSON.stringify(response.user), { expires: 7 }); // 7 days expiry
         }
-        
-        setIsLoading(false);
+
         return true;
       }
-      
-      setIsLoading(false);
+
       return false;
     } catch (error) {
-      console.error('OTP verification failed:', error);
-      setIsLoading(false);
+      console.error("OTP verification failed:", error);
       return false;
     }
   };
 
   const logout = () => {
     setUser(null);
-    Cookies.remove('AUTH_TOKEN');
-    Cookies.remove('AUTH_USER');
+    Cookies.remove("AUTH_TOKEN");
+    Cookies.remove("AUTH_USER");
   };
 
   return (
@@ -148,7 +131,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         isAuthenticated: !!user,
-        isLoading,
         login,
         logout,
         verifyOTP,

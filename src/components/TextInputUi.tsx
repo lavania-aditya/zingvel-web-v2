@@ -10,6 +10,7 @@ interface IProps {
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
   autoFocus?: boolean;
+  disabled?: boolean;
 }
 
 export const TextInputUi = (props: IProps): React.ReactNode => {
@@ -42,6 +43,7 @@ export const TextInputUi = (props: IProps): React.ReactNode => {
         fullWidth
         variant="outlined"
         value={props.value}
+        disabled={props.disabled}
         onChange={props.handleValueChange}
         error={!!props.errorMessage}
         helperText={props.errorMessage}

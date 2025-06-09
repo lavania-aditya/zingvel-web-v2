@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { Close as CloseIcon, Search as SearchIcon, GetApp as DownloadIcon, Person as PersonIcon } from "@mui/icons-material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import LoginDialog from "./LoginDialog";
@@ -31,7 +32,7 @@ import DownloadAppDialog from "./DownloadAppDialog";
 
 const Header = () => {
   const theme = useTheme();
-  // const router = useRouter();
+  const router = useRouter();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("md"));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
@@ -150,7 +151,7 @@ const Header = () => {
               src="/zingvel_logo.png"
               alt="Zingvel Logo"
               sx={{
-                height: 40,
+                height: isMobileOrTablet ? 30 : 40,
                 maxWidth: "100%",
                 objectFit: "contain",
               }}
@@ -188,13 +189,93 @@ const Header = () => {
 
           {/* Mobile search icon and user icon */}
           {isMobileOrTablet ? (
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton component={Link} href="/search" sx={{ mr: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                //  backgroundColor: "red",
+                width: "100%",
+              }}
+            >
+              {/* <IconButton component={Link} href="/search">
                 <SearchIcon />
-              </IconButton>
-              <IconButton edge="end" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+              </IconButton> */}
+
+              <Box
+                // elevation={0}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  px: 2,
+                  py: 1,
+                  mx: 4,
+                  flexGrow: 1,
+                  // maxWidth: 500,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  // backgroundColor: "red",
+                  borderRadius: 2,
+                  "&:hover": {
+                    boxShadow: 1,
+                  },
+                  cursor: "pointer",
+                }}
+                component={Link}
+                href="/search"
+              >
+                <SearchIcon sx={{ color: "text.secondary", mr: 1, fontSize: "16px" }} />
+                <Typography
+                  color="text.secondary"
+                  sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "100%", fontSize: "1rem" }}
+                >
+                  Search ...
+                </Typography>
+              </Box>
+
+              {/* <IconButton edge="end" color="inherit" aria-label="menu" onClick={() => router.push("/drawer")}>
                 <PersonIcon />
-              </IconButton>
+              </IconButton> */}
+              {/* <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => (isAuthenticated ? router.push("/profile") : setLoginDialogOpen(true))}
+                sx={{
+                  textTransform: "none",
+                  color: "inherit",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  // borderRadius: 40,
+                }}
+              > */}
+              {/* <Avatar
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    bgcolor: "primary.main",
+                  }}
+                >
+                   
+                  <PersonIcon fontSize="small" />
+                </Avatar> */}
+              <Avatar
+                sx={{
+                  width: 35,
+                  height: 35,
+                  bgcolor: "primary.main",
+                }}
+                onClick={() => (isAuthenticated ? router.push("/profile") : setLoginDialogOpen(true))}
+              >
+                <PersonIcon fontSize="small" />
+              </Avatar>
+              {/* <Typography
+                  color="text.secondary"
+                  sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "100%", fontSize: "1rem" }}
+                >
+                  {isAuthenticated ? "Profile" : "Login"}
+                </Typography> */}
+              {/* </Button> */}
             </Box>
           ) : (
             // Desktop navigation - Right section
@@ -206,52 +287,29 @@ const Header = () => {
 
               {/* User avatar with login/account button */}
               <Box sx={{ ml: 2, display: "flex", alignItems: "center" }}>
-                {isAuthenticated ? (
-                  <Button
-                    onClick={() => setLoginDialogOpen(true)}
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => (isAuthenticated ? router.push("/profile") : setLoginDialogOpen(true))}
+                  sx={{
+                    textTransform: "none",
+                    color: "inherit",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Avatar
                     sx={{
-                      textTransform: "none",
-                      color: "inherit",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
+                      width: 32,
+                      height: 32,
+                      bgcolor: "primary.main",
                     }}
                   >
-                    <Avatar
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        bgcolor: "primary.main",
-                      }}
-                    >
-                      <PersonIcon fontSize="small" />
-                    </Avatar>
-                    <Typography variant="body1" sx={{ fontFamily: "inherit" }}>
-                      My Account
-                    </Typography>
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => setLoginDialogOpen(true)}
-                    startIcon={
-                      <Avatar
-                        sx={{
-                          width: 24,
-                          height: 24,
-                          bgcolor: "inherit",
-                          color: "primary.contrastText",
-                        }}
-                      >
-                        <PersonIcon fontSize="small" color="primary" />
-                      </Avatar>
-                    }
-                    sx={{}}
-                  >
-                    Login / Sign Up
-                  </Button>
-                )}
+                    <PersonIcon fontSize="small" />
+                  </Avatar>
+                  {isAuthenticated ? "Profile" : "Login"}
+                </Button>
               </Box>
             </Box>
           )}
