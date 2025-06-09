@@ -70,7 +70,7 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   }, [timerActive, otpTimer]);
 
   // Handle phone number input
-  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value.replace(/\D/g, ""); // Only allow digits
     if (value.length <= 10) {
       setPhoneNumber(value);
@@ -106,7 +106,7 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
   };
 
   // Handle OTP input change
-  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value.replace(/\D/g, ""); // Only allow digits
     if (value.length <= 6 && /^\d*$/.test(value)) {
       setOtp(value);

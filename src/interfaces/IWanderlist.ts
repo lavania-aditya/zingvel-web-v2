@@ -192,3 +192,14 @@ export interface IRentalItem {
     y: number;
   };
 }
+
+export interface ICreateWanderList {
+  name: string;
+  travelDate: string;
+  cityId: string;
+  numberOfDays: number;
+  numberOfAdults: number;
+  numberOfChildren: number;
+  budget: number;
+  goals: Array<string>;
+}

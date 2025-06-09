@@ -19,8 +19,7 @@ const CategoryBar = (props: IProps) => {
   const categoryParam = searchParams.get("category");
 
   const categoryItem = (category: ICategoryItem | null, idx: number, exploreIcon?: boolean, showAllIcon?: boolean): React.ReactNode => {
-    const isSelected = categoryParam === category?._id || exploreIcon;
-    console.log("category", category, "idx", idx, "exploreIcon", exploreIcon, "showAllIcon", showAllIcon);
+    const isSelected = categoryParam === category?.id;
     return (
       <Box
         key={idx}
@@ -36,16 +35,23 @@ const CategoryBar = (props: IProps) => {
           minHeight: 70,
           maxWidth: 80,
           maxHeight: 70,
-          // mr: 1,
           backgroundColor: "white",
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 2,
         }}
-        onClick={() => router.push(showAllIcon ? `/package-categories` : Boolean(category) ? `/packages?category=${category._id}` : "/")}
+        onClick={() => {
+          if (category) {
+            router.push(`/packages/category/${category?.id}`);
+          } else if (showAllIcon) {
+            router.push(`/package-categories`);
+          } else {
+            router.push(`/`);
+          }
+        }}
       >
         {/* Icon container with potential trending indicator */}
 
-        {((category && category.isTrending) || exploreIcon) && (
+        {category && category.isTrending && (
           <Box
             sx={{
               position: "absolute",
@@ -66,7 +72,7 @@ const CategoryBar = (props: IProps) => {
         )}
 
         {exploreIcon ? (
-          <ExploreIcon sx={{ color: isSelected ? theme.palette.primary.main : theme.palette.text.secondary }} />
+          <ExploreIcon sx={{ color: theme.palette.text.secondary }} />
         ) : showAllIcon ? (
           <ChevronRightIcon sx={{ color: theme.palette.text.secondary }} />
         ) : category && category.icon ? (
@@ -80,7 +86,7 @@ const CategoryBar = (props: IProps) => {
             sx={{
               textAlign: "center",
               fontWeight: isSelected ? 600 : 400,
-              color: isSelected ? theme.palette.primary.main : theme.palette.text.primary,
+              color: isSelected || (!isSelected && exploreIcon) ? theme.palette.primary.main : theme.palette.text.primary,
               maxWidth: "100%",
               overflow: "hidden",
               textOverflow: "ellipsis",

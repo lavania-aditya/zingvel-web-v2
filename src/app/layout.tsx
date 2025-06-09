@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lato, Nunito, Ubuntu, Raleway, Montserrat } from "next/font/google";
+import { Ubuntu, Raleway, Montserrat } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import CssBaseline from "@mui/material/CssBaseline";
 import Layout from "@/components/Layout";

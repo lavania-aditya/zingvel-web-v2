@@ -1,6 +1,5 @@
 "use client";
-import { hexToRgba } from "@/helpers/commonFunctions";
-import { createTheme, responsiveFontSizes, Theme, PaletteMode, PaletteOptions, hexToRgb } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes, Theme, PaletteMode, PaletteOptions } from "@mui/material/styles";
 
 export const FONTS = {
   heading: "var(--font-ubuntu)",
@@ -51,7 +50,7 @@ const getPalette = (mode: PaletteMode): PaletteOptions => ({
   mode,
   primary: {
     main: colors.primary,
-    light: "#FDD06D", // Lighter shade of primary
+    light: "#fca21a99", // Lighter shade of primary
     dark: "#E69200", // Darker shade of primary
     contrastText: "#000000",
   },
@@ -84,8 +83,8 @@ const getPalette = (mode: PaletteMode): PaletteOptions => ({
     contrastText: "#ffffff",
   },
   success: {
-    main: colors.green,
-    light: "#4CAF50",
+    main: "#2E7F49",
+    light: "#4caf50cc",
     dark: "#1B5E20",
     contrastText: "#ffffff",
   },

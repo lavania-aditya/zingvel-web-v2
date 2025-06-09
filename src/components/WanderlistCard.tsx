@@ -20,16 +20,16 @@ const WanderlistCard = ({ wanderlistData }: IProps) => {
         borderRadius: 3,
         overflow: "hidden",
         boxShadow: theme.shadows[2],
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        // transition: "transform 0.3s ease, box-shadow 0.3s ease",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         textDecoration: "none",
         color: "inherit",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: theme.shadows[4],
-        },
+        // "&:hover": {
+        //   transform: "translateY(-4px)",
+        //   boxShadow: theme.shadows[4],
+        // },
       }}
     >
       <Box sx={{ position: "relative" }}>
@@ -38,8 +38,7 @@ const WanderlistCard = ({ wanderlistData }: IProps) => {
           sx={{
             height: 200,
             backgroundColor: theme.palette.primary.main,
-            backgroundImage: wanderlistData.city && wanderlistData.city.heroImage ? 
-              `url(${wanderlistData.city.heroImage})` : "none",
+            backgroundImage: wanderlistData.city && wanderlistData.city.heroImage ? `url(${wanderlistData.city.heroImage})` : "none",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -90,7 +89,7 @@ const WanderlistCard = ({ wanderlistData }: IProps) => {
               {wanderlistData.activities?.length || 0} activities
             </Typography>
           </Box>
-          
+
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography variant="body2" color="text.secondary">
               {wanderlistData.likeCount || 0} likes

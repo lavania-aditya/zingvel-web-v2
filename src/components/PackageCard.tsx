@@ -42,7 +42,7 @@ const PackageCard = ({ packageData }: IProps) => {
     if (isAuthenticated) {
       // User is logged in, proceed with showing interest
       setIsInterested(true);
-      console.log("Interested in package:", packageData._id);
+      console.log("Interested in package:", packageData.id);
       // Here you would call your API to register interest
     } else {
       // User is not logged in, open login dialog
@@ -71,7 +71,7 @@ const PackageCard = ({ packageData }: IProps) => {
         {/* Card content as a link to package detail page */}
         <Box
           component={Link}
-          href={`/package/${packageData._id}`}
+          href={`/package/${packageData.id}`}
           sx={{
             textDecoration: "none",
             color: "inherit",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Container, Typography, Stack, Link as MuiLink, Divider, IconButton } from "@mui/material";
+import { Box, Container, Typography, Stack, Link as MuiLink, Divider, IconButton, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import {
   Facebook as FacebookIcon,
@@ -10,8 +10,11 @@ import {
   YouTube as YouTubeIcon,
   Favorite as HeartIcon,
 } from "@mui/icons-material";
+import theme from "@/utils/theme";
 
 const Footer = () => {
+  const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("md"));
+
   const currentYear = new Date().getFullYear();
   return (
     <Box
@@ -21,6 +24,7 @@ const Footer = () => {
         bgcolor: "#2A2E33",
         color: "white",
         marginTop: 15,
+        paddingBottom: isMobileOrTablet ? "10rem" : "4rem",
       }}
     >
       {/* Main footer content */}

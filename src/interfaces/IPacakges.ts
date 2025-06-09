@@ -1,5 +1,5 @@
 export interface ICategoryItem {
-  _id: string;
+  id: string;
   name: string;
   slug: string;
   description: string;
@@ -10,7 +10,6 @@ export interface ICategoryItem {
 }
 
 export interface IPackageItem {
-  _id: string;
   name: string;
   description: string;
   location: {

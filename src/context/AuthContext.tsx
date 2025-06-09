@@ -68,10 +68,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
           // If no user in cookies or parsing failed, fetch from API
           const response = await getUserFromTokenApi();
-          if (response && response.data) {
-            setUser(response.data);
+          if (response && response.user) {
+            setUser(response.user);
             // Store user in cookies
-            Cookies.set("AUTH_USER", JSON.stringify(response.data), { expires: 7 });
+            Cookies.set("AUTH_USER", JSON.stringify(response.user), { expires: 7 });
           }
         } catch (error) {
           console.error("Failed to get user data:", error);

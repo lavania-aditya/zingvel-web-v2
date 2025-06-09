@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Cookies from "js-cookie";
 import { GetServerSidePropsContext } from "next";
 import { logError } from "@/utils/errorHandling";
