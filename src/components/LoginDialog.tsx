@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Box, Typography, Button, CircularProgress, useTheme, useMediaQuery } from "@mui/material";
-import { Edit as EditIcon, PhoneIphone as PhoneIcon, Looks6 as OtpIcon } from "@mui/icons-material";
+import { Edit as EditIcon, Looks6 as OtpIcon } from "@mui/icons-material";
 import AdaptiveDialog from "./AdaptiveDialog";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
@@ -192,12 +192,12 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
             errorMessage={error}
             disabled={otpSent}
             startAdornment={
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <PhoneIcon />{" "}
-                <Typography variant="subtitle2" sx={{ fontFamily: FONTS.text, fontSize: "1rem" }}>
-                  +91
-                </Typography>
-              </Box>
+              // <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              // {/* <PhoneIcon />{" "} */}
+              <Typography variant="subtitle2" sx={{ fontFamily: FONTS.text, fontSize: "1rem" }}>
+                +91
+              </Typography>
+              // </Box>
             }
             placeholder="8650XXXXXX"
           />

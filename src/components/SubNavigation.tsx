@@ -83,7 +83,7 @@ const SubNavigation = () => {
 
             <Button
               component={Link}
-              href="/inquires"
+              href="/inquiries"
               sx={{
                 color: `${theme.palette.common.black} !important`,
                 fontFamily: FONTS.heading,
@@ -96,7 +96,7 @@ const SubNavigation = () => {
                 },
               }}
             >
-              Inquires
+              Inquiries
             </Button>
           </Box>
 
@@ -124,7 +124,8 @@ const SubNavigation = () => {
 
             <Button
               component={Link}
-              href="/partner"
+              href="https://partner.zingvel.com"
+              target="_blank"
               startIcon={<PartnerIcon fontSize="small" />}
               sx={{
                 color: `${theme.palette.common.black} !important`,
@@ -150,7 +151,7 @@ const SubNavigation = () => {
                 <DarkModeIcon fontSize="small" sx={{ mr: 0.5, color: theme.palette.text.secondary }} />
               )}
               <Typography variant="body2" sx={{ mr: 1, fontSize: "0.8rem", color: theme.palette.text.secondary }}>
-                {isDarkMode ? "Light" : "Dark"}
+                {isDarkMode ? "Dark" : "Light"}
               </Typography>
               <Switch checked={isDarkMode} onChange={toggleTheme} color="primary" size="small" />
             </Box>

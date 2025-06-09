@@ -23,7 +23,7 @@ const Footer = () => {
         py: 6,
         bgcolor: "#2A2E33",
         color: "white",
-        marginTop: 15,
+        // marginTop: 15,
         paddingBottom: isMobileOrTablet ? "10rem" : "4rem",
       }}
     >
@@ -40,10 +40,43 @@ const Footer = () => {
             borderRadius: 2,
             p: { xs: 3, md: 5 },
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-            marginTop: -15,
+            // marginTop: -15,
           }}
         >
           {/* Quick Links Column */}
+          <Box sx={{ width: { xs: "100%", md: "33%" } }}>
+            <Box
+              component="img"
+              src="/zingvel_logo.png"
+              alt="Zingvel Logo"
+              sx={{
+                height: 40,
+                mb: 2,
+                maxWidth: "100%",
+                objectFit: "contain",
+                // filter: "brightness(0) invert(1)", // Make logo white
+              }}
+            />
+            <Typography variant="subtitle2" sx={{ color: theme.palette.grey[400], textAlign: "center", my: 2 }}>
+              Discover and book travel packages, tours, and custom itineraries to destinations worldwide. Plan your perfect trip with Zingvel.
+            </Typography>
+            {/* <Typography sx={{ color: "black" }}>For any inquiries, please contact us at support@zingvel.com or +91 9457234349.</Typography> */}
+            <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
+              {[
+                { icon: <FacebookIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} />, href: "https://facebook.com/zingvel" },
+                { icon: <InstagramIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} />, href: "https://instagram.com/zingvel" },
+                { icon: <TwitterIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} />, href: "https://twitter.com/zingvel" },
+                { icon: <LinkedInIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} />, href: "https://linkedin.com/company/zingvel" },
+                { icon: <YouTubeIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} />, href: "https://youtube.com/zingvel" },
+              ].map((social, index) => (
+                <IconButton key={index} component="a" href={social.href} target="_blank" rel="noopener noreferrer" size="large">
+                  {social.icon}
+                </IconButton>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Travel Destinations Column */}
           <Box sx={{ width: { xs: "100%", md: "33%" } }}>
             <Typography variant="h6" fontWeight="bold" color="#2A2E33" gutterBottom>
               Quick Links
@@ -71,13 +104,6 @@ const Footer = () => {
                 Support
               </MuiLink>
             </Stack>
-          </Box>
-
-          {/* Travel Destinations Column */}
-          <Box sx={{ width: { xs: "100%", md: "33%" } }}>
-            <Typography sx={{ color: "black" }}>
-              Made with <HeartIcon /> by Zingvel
-            </Typography>
           </Box>
 
           {/* Contact Info Column */}
@@ -131,47 +157,18 @@ const Footer = () => {
 
       {/* Logo and social links */}
       <Container maxWidth="lg" sx={{ textAlign: "center", mt: 4 }}>
-        <Box
-          component="img"
-          src="/zingvel_logo.png"
-          alt="Zingvel Logo"
-          sx={{
-            height: 40,
-            mb: 2,
-            maxWidth: "100%",
-            objectFit: "contain",
-            filter: "brightness(0) invert(1)", // Make logo white
-          }}
-        />
-
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
-          {[
-            { icon: <FacebookIcon />, href: "https://facebook.com/zingvel" },
-            { icon: <InstagramIcon />, href: "https://instagram.com/zingvel" },
-            { icon: <TwitterIcon />, href: "https://twitter.com/zingvel" },
-            { icon: <LinkedInIcon />, href: "https://linkedin.com/company/zingvel" },
-            { icon: <YouTubeIcon />, href: "https://youtube.com/zingvel" },
-          ].map((social, index) => (
-            <IconButton
-              key={index}
-              component="a"
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{
-                color: "rgba(255,255,255,0.7)",
-                bgcolor: "rgba(255,255,255,0.1)",
-                "&:hover": {
-                  bgcolor: "rgba(255,255,255,0.2)",
-                  color: "white",
-                },
-              }}
-            >
-              {social.icon}
-            </IconButton>
-          ))}
+        <Box display="flex" alignItems="center" justifyContent="center" gap={1} sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ color: theme.palette.common.white }}>
+            Made with
+          </Typography>
+          <HeartIcon sx={{ color: theme.palette.error.light }} />
+          <Typography variant="h6" sx={{ color: theme.palette.common.white }}>
+            by
+          </Typography>
+          <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
+            Zingvel
+          </Typography>
         </Box>
-
         <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 3 }} />
 
         <Typography variant="caption" color="rgba(255,255,255,0.7)">

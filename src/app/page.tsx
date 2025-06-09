@@ -9,6 +9,7 @@ import WanderlistCard from "@/components/WanderlistCard";
 import { getTrendingWanderlistsService } from "@/services/SWanderlist";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import PartnerBannerWrapper from "@/components/PartnerBannerWrapper";
+import DownloadAppBanner from "@/components/DownloadAppBanner";
 
 // Import the PartnerBanner component wrapper
 
@@ -90,6 +91,9 @@ export default async function Home() {
           </Grid>
         </Container>
 
+        {/* Download App Banner */}
+        <DownloadAppBanner />
+        
         {/* Get in Touch Section */}
         <Container sx={{ my: 6, py: 4 }}>
           <Card sx={{ borderRadius: 3, overflow: "hidden", boxShadow: 3 }}>

@@ -1,20 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  useTheme,
-  Snackbar,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, Button, useTheme, Snackbar, Alert, CircularProgress } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import CallOutlinedIcon from "@mui/icons-material/CallOutlined";
+import { CallOutlined, Person as PersonIcon } from "@mui/icons-material";
+import { TextInputUi } from "./TextInputUi";
+import { FONTS } from "@/utils/theme";
 
 interface GetInTouchFormProps {
   showTitle?: boolean;
@@ -22,16 +15,17 @@ interface GetInTouchFormProps {
   variant?: "full" | "compact";
 }
 
-export default function GetInTouchForm({
-  showTitle = true,
-  showInquiryOptions = true,
-  variant = "full",
-}: GetInTouchFormProps) {
+export default function GetInTouchForm({ showTitle = true, showInquiryOptions = true, variant = "full" }: GetInTouchFormProps) {
   const theme = useTheme();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     message: "How can we help you?",
+  });
+
+  const [errorMessage, setErrorMessage] = useState({
+    name: "",
+    phone: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -42,7 +36,16 @@ export default function GetInTouchForm({
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let { value } = e.target;
+
+    if (name === "phone") {
+      debugger;
+      const newVal = e.target.value.replace(/\D/g, ""); // Only allow digits
+      if (newVal.length <= 10 && /^\d*$/.test(newVal)) {
+        value = newVal;
+      }
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -51,22 +54,26 @@ export default function GetInTouchForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (!formData.name || /^\d*$/.test(formData.phone.trim())) {
+      const newErrorMessage = { ...errorMessage };
+      if (!formData.name.trim()) {
+        newErrorMessage.name = "Please enter name";
+      }
+      if (/^\d*$/.test(formData.phone.trim())) {
+        newErrorMessage.phone = "Please enter valid phone number";
+      }
+      setErrorMessage(newErrorMessage);
+      return;
+    }
 
     // Simulate form submission
+    setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setSnackbar({
         open: true,
         message: "Your message has been sent successfully! We will get back to you soon.",
         severity: "success",
-      });
-
-      // Reset form
-      setFormData({
-        name: "",
-        phone: "",
-        message: "How can we help you?",
       });
     }, 1500);
   };
@@ -76,6 +83,11 @@ export default function GetInTouchForm({
       ...prev,
       open: false,
     }));
+    setFormData({
+      name: "",
+      phone: "",
+      message: "How can we help you?",
+    });
   };
 
   const InquiryOptions = () => (
@@ -192,7 +204,7 @@ export default function GetInTouchForm({
               mr: 2,
             }}
           >
-            <CallOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+            <CallOutlined sx={{ color: theme.palette.primary.main }} />
           </Box>
           <Box>
             <Typography variant="subtitle2" fontWeight={600}>
@@ -215,7 +227,9 @@ export default function GetInTouchForm({
         </Typography>
       )}
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: showInquiryOptions && variant === "full" ? 'repeat(2, 1fr)' : '1fr' }, gap: 4 }}>
+      <Box
+        sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: showInquiryOptions && variant === "full" ? "repeat(2, 1fr)" : "1fr" }, gap: 4 }}
+      >
         {showInquiryOptions && variant === "full" && (
           <Box>
             <InquiryOptions />
@@ -229,73 +243,47 @@ export default function GetInTouchForm({
             </Typography>
             <Box component="form" onSubmit={handleSubmit}>
               <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  Your Name <span style={{ color: "red" }}>*</span>
-                </Typography>
-                <TextField
-                  fullWidth
-                  placeholder="Enter your full name"
-                  name="name"
+                <TextInputUi
+                  label="Your Name"
                   value={formData.name}
-                  onChange={handleChange}
-                  required
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1,
-                    },
-                  }}
+                  handleValueChange={handleChange}
+                  name="name"
+                  // required
+                  placeholder="Enter your full name"
+                  errorMessage={errorMessage.name}
+                  startAdornment={<PersonIcon sx={{ display: "block" }} />}
                 />
               </Box>
 
               <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  Phone Number
-                </Typography>
-                <TextField
-                  fullWidth
-                  placeholder="9876543210"
-                  name="phone"
+                <TextInputUi
+                  label="Phone Number"
                   value={formData.phone}
-                  onChange={handleChange}
-                  variant="outlined"
-                  size="small"
-                  InputProps={{
-                    startAdornment: (
-                      <Typography variant="body2" color="text.secondary" sx={{ mr: 0.5 }}>
-                        +91
-                      </Typography>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1,
-                    },
-                  }}
+                  handleValueChange={handleChange}
+                  name="phone"
+                  // required
+                  placeholder="8650XXXXXX"
+                  errorMessage={errorMessage.phone}
+                  startAdornment={
+                    <Typography variant="subtitle2" sx={{ display: "block", fontFamily: FONTS.text, fontSize: "1rem" }}>
+                      +91
+                    </Typography>
+                  }
                 />
               </Box>
 
               <Box sx={{ mb: 3 }}>
-                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  Your Message <span style={{ color: "red" }}>*</span>
-                </Typography>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  placeholder="How can we help you?"
-                  name="message"
+                <TextInputUi
+                  label="Message"
                   value={formData.message}
-                  onChange={handleChange}
+                  handleValueChange={handleChange}
+                  name="message"
                   required
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1,
-                    },
-                  }}
+                  multiline
+                  rows={5}
+                  placeholder="Enter your message"
+                  // errorMessage={errorMessage.}
+                  // startAdornment={<EmailIcon />}
                 />
               </Box>
 
@@ -314,6 +302,7 @@ export default function GetInTouchForm({
                     backgroundColor: theme.palette.primary.dark,
                   },
                 }}
+                onClick={handleSubmit}
               >
                 Send Message
               </Button>

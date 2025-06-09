@@ -43,3 +43,17 @@ export const updateUserProfileService = (params: UpdateUserProfileParams) => {
   const { userId, ...updateData } = params;
   return ApiHelper.wanderlist.patch(`/${BASE_TABLE_PATH}/${userId}`, { body: updateData });
 };
+
+/**
+ * Get user profile by user ID
+ * @param userId - The ID of the user to fetch
+ * @returns User profile data
+ */
+export const getUserProfile = async (userId: string) => {
+  try {
+    return await ApiHelper.wanderlist.get(`/${BASE_TABLE_PATH}/${userId}`);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
+  }
+};

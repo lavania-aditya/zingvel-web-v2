@@ -107,7 +107,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: { c
 
             <Grid container spacing={3}>
               {group.packages.slice(0, 3).map((pkg) => (
-                <Grid item xs={12} sm={6} md={4} key={pkg.id}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg.id}>
                   <PackageCard packageData={pkg} />
                 </Grid>
               ))}
@@ -124,7 +124,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: { c
 
             <Grid container spacing={3}>
               {groupedPackages.otherPackages.map((pkg) => (
-                <Grid item xs={12} sm={6} md={4} key={pkg.id}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg.id}>
                   <PackageCard packageData={pkg} />
                 </Grid>
               ))}
