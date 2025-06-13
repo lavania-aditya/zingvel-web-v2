@@ -6,6 +6,7 @@ export interface IUser {
   countryCode: number;
   phNumber: number;
   phVerified: boolean;
+  whatsappNumber?: number;
   avatarImage: string;
   email: string | null;
   emailVerified: boolean;

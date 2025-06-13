@@ -12,6 +12,7 @@ interface User {
   countryCode: number;
   phNumber: string;
   phVerified: boolean;
+  whatsappNumber?: string;
   avatarImage?: string;
   email: string | null;
   emailVerified: boolean;

@@ -24,7 +24,6 @@ import {
   IconButton,
   useMediaQuery,
   Drawer,
-  Grid,
 } from "@mui/material";
 import { Edit as EditIcon, DeleteForever as DeleteIcon } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
@@ -65,7 +64,7 @@ const ProfileClient = () => {
   const [phoneNumberError, setPhoneNumberError] = useState("");
 
   // Check if device is mobile
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Sample avatar images
   const avatarOptions = [
@@ -171,11 +170,13 @@ const ProfileClient = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box component="form" onSubmit={handleSubmit}>
         {/* Page Title Card */}
-        <Card sx={{
-          mb: 4,
-          bgcolor: isDarkMode ? "background.paper" : "white",
-          color: isDarkMode ? "text.primary" : "inherit",
-        }}>
+        <Card
+          sx={{
+            mb: 4,
+            bgcolor: isDarkMode ? "background.paper" : "white",
+            color: isDarkMode ? "text.primary" : "inherit",
+          }}
+        >
           <CardContent>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Personal Information
@@ -187,20 +188,18 @@ const ProfileClient = () => {
         </Card>
 
         {/* Main Content Card */}
-        <Card sx={{
-          mb: 4,
-          bgcolor: isDarkMode ? "background.paper" : "white",
-          color: isDarkMode ? "text.primary" : "inherit",
-        }}>
+        <Card
+          sx={{
+            mb: 4,
+            bgcolor: isDarkMode ? "background.paper" : "white",
+            color: isDarkMode ? "text.primary" : "inherit",
+          }}
+        >
           <CardContent>
             {/* Profile Picture with Edit Icon */}
             <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
               <Box sx={{ position: "relative" }}>
-                <Avatar
-                  src={selectedAvatar}
-                  alt={`${profileData.firstName} ${profileData.lastName}`}
-                  sx={{ width: 150, height: 150 }}
-                />
+                <Avatar src={selectedAvatar} alt={`${profileData.firstName} ${profileData.lastName}`} sx={{ width: 150, height: 150 }} />
                 <IconButton
                   sx={{
                     position: "absolute",
@@ -222,33 +221,12 @@ const ProfileClient = () => {
             </Box>
 
             {/* Form Fields in Two Columns */}
-            <Grid container spacing={3}>
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 3 }}>
               {/* Left Column */}
-              <Grid item xs={12} md={6} component="div">
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="First Name"
-                  name="firstName"
-                  value={profileData.firstName}
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="Last Name"
-                  name="lastName"
-                  value={profileData.lastName}
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="Username"
-                  name="username"
-                  value={profileData.username}
-                  onChange={handleInputChange}
-                />
+              <Box sx={{ flex: 1, width: { xs: "100%", md: "50%" } }}>
+                <TextField fullWidth margin="normal" label="First Name" name="firstName" value={profileData.firstName} onChange={handleInputChange} />
+                <TextField fullWidth margin="normal" label="Last Name" name="lastName" value={profileData.lastName} onChange={handleInputChange} />
+                <TextField fullWidth margin="normal" label="Username" name="username" value={profileData.username} onChange={handleInputChange} />
                 <TextField
                   fullWidth
                   margin="normal"
@@ -267,18 +245,11 @@ const ProfileClient = () => {
                   InputProps={{ readOnly: true }}
                   helperText="WhatsApp number cannot be changed"
                 />
-              </Grid>
+              </Box>
 
               {/* Right Column */}
-              <Grid item xs={12} md={6} component="div">
-                <TextField
-                  fullWidth
-                  margin="normal"
-                  label="Email"
-                  name="email"
-                  value={profileData.email}
-                  onChange={handleInputChange}
-                />
+              <Box sx={{ flex: 1, width: { xs: "100%", md: "50%" } }}>
+                <TextField fullWidth margin="normal" label="Email" name="email" value={profileData.email} onChange={handleInputChange} />
                 <TextField
                   fullWidth
                   margin="normal"
@@ -291,13 +262,7 @@ const ProfileClient = () => {
                 />
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="gender-label">Gender</InputLabel>
-                  <Select
-                    labelId="gender-label"
-                    name="gender"
-                    value={profileData.gender}
-                    label="Gender"
-                    onChange={handleSelectChange}
-                  >
+                  <Select labelId="gender-label" name="gender" value={profileData.gender} label="Gender" onChange={handleSelectChange}>
                     <MenuItem value="">Select Gender</MenuItem>
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
@@ -316,15 +281,15 @@ const ProfileClient = () => {
                   onChange={handleInputChange}
                   placeholder="Tell us a bit about yourself..."
                 />
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
 
             {/* Travel Preferences */}
             <Typography variant="h6" fontWeight="medium" sx={{ mt: 4, mb: 2 }}>
               Travel Preferences
             </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6} component="div">
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 3 }}>
+              <Box sx={{ flex: 1 }}>
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="travel-style-label">Travel Style</InputLabel>
                   <Select
@@ -342,8 +307,8 @@ const ProfileClient = () => {
                     <MenuItem value="relaxation">Relaxation</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6} component="div">
+              </Box>
+              <Box sx={{ flex: 1 }}>
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="places-travelled-label">Places Travelled Per Year</InputLabel>
                   <Select
@@ -360,8 +325,8 @@ const ProfileClient = () => {
                     <MenuItem value="10+">More than 10 places</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
 
             {/* Save Button */}
             <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
@@ -390,12 +355,7 @@ const ProfileClient = () => {
             <Typography variant="body2" color="error" sx={{ mb: 2 }}>
               Once you delete your account, there is no going back. Please be certain.
             </Typography>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleOpenDeleteDialog}
-              startIcon={<DeleteIcon />}
-            >
+            <Button variant="outlined" color="error" onClick={handleOpenDeleteDialog} startIcon={<DeleteIcon />}>
               Delete Account
             </Button>
           </CardContent>
@@ -420,8 +380,8 @@ const ProfileClient = () => {
                     border: selectedAvatar === avatar ? `2px solid ${theme.palette.primary.main}` : "none",
                     "&:hover": {
                       transform: "scale(1.05)",
-                      boxShadow: "0 0 10px rgba(0,0,0,0.2)"
-                    }
+                      boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                    },
                   }}
                   onClick={() => handleAvatarSelect(avatar)}
                 />
@@ -436,13 +396,11 @@ const ProfileClient = () => {
 
       {/* Avatar Selection Drawer for Mobile */}
       {isMobile && (
-        <Drawer
-          anchor="bottom"
-          open={avatarDialogOpen}
-          onClose={handleCloseAvatarDialog}
-        >
+        <Drawer anchor="bottom" open={avatarDialogOpen} onClose={handleCloseAvatarDialog}>
           <Box sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Select an Avatar</Typography>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Select an Avatar
+            </Typography>
             <Box sx={{ display: "flex", overflowX: "auto", gap: 2, pb: 2 }}>
               {avatarOptions.map((avatar, index) => (
                 <Avatar
@@ -469,13 +427,10 @@ const ProfileClient = () => {
 
       {/* Delete Account Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-        <DialogTitle sx={{ color: theme.palette.error.main }}>
-          Confirm Account Deletion
-        </DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.error.main }}>Confirm Account Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            This action cannot be undone. All your data will be permanently deleted.
-            To confirm deletion, please enter your phone number below.
+            This action cannot be undone. All your data will be permanently deleted. To confirm deletion, please enter your phone number below.
           </DialogContentText>
           <TextField
             autoFocus

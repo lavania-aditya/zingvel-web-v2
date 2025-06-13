@@ -40,7 +40,6 @@ export default function GetInTouchForm({ showTitle = true, showInquiryOptions = 
     let { value } = e.target;
 
     if (name === "phone") {
-      debugger;
       const newVal = e.target.value.replace(/\D/g, ""); // Only allow digits
       if (newVal.length <= 10 && /^\d*$/.test(newVal)) {
         value = newVal;

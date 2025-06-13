@@ -1,18 +1,140 @@
 "use client";
 
-import { Card, CardMedia, CardContent, Typography, Box, useTheme } from "@mui/material";
-import { LocationOn as LocationIcon, AccessTime as TimeIcon } from "@mui/icons-material";
+import { Card, CardMedia, CardContent, Typography, Box, useTheme, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
+import { LocationOn as LocationIcon, AccessTime as TimeIcon, Share as ShareIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon, Add as AddIcon } from "@mui/icons-material";
 import Link from "next/link";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
+import React, { useState, useEffect } from "react";
+import { likeWanderListService, checkedWanderlistLiked } from "@/services/SWanderlist";
+
+// Import context hooks and components
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
+import LoginDialog from "./LoginDialog";
 
 interface IProps {
   wanderlistData: IWanderlistItem;
+  onAddToWanderlist?: (wanderlistId: string) => void;
 }
 
-const WanderlistCard = ({ wanderlistData }: IProps) => {
+const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
   const theme = useTheme();
+  const { user, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(wanderlistData.likeCount || 0);
+  const [shareDialogOpen, setShareDialogOpen] = useState<boolean>(false);
+  const [loginDialogOpen, setLoginDialogOpen] = useState<boolean>(false);
+  const [shareUrl, setShareUrl] = useState<string>("");
+  const [pendingAction, setPendingAction] = useState<"like" | "add" | null>(null);
+  
+  // Check if the current user is the creator of the wanderlist
+  const isOwner = user?.id === wanderlistData.userId;
 
-  return (
+  // Handle login dialog close
+  const handleLoginDialogClose = () => {
+    setLoginDialogOpen(false);
+    setPendingAction(null);
+  };
+
+  // Effect to handle post-login actions
+  useEffect(() => {
+    const handlePendingAction = async () => {
+      if (isAuthenticated && pendingAction && wanderlistData.id) {
+        if (pendingAction === "like") {
+          try {
+            await likeWanderListService(wanderlistData.id);
+            setIsLiked(true);
+            showToast("Added to favorites", "success");
+          } catch (error) {
+            console.error("Error liking wanderlist:", error);
+            showToast("Failed to update favorite status", "error");
+          }
+        } else if (pendingAction === "add" && onAddToWanderlist) {
+          onAddToWanderlist(wanderlistData.id);
+          showToast("Added to your wanderlists", "success");
+        }
+        setPendingAction(null);
+      }
+    };
+
+    handlePendingAction();
+  }, [isAuthenticated, pendingAction, wanderlistData.id, onAddToWanderlist, showToast]);
+
+  useEffect(() => {
+    // Set the share URL when the component mounts
+    if (typeof window !== 'undefined') {
+      setShareUrl(`${window.location.origin}/wanderlist/${wanderlistData.id}`);
+    }
+    
+    // Check if the user has liked this wanderlist
+    const checkLikeStatus = async () => {
+      if (isAuthenticated && wanderlistData.id) {
+        try {
+          const response = await checkedWanderlistLiked(wanderlistData.id);
+          setIsLiked(response.isLiked);
+        } catch (error) {
+          console.error("Error checking like status:", error);
+        }
+      }
+    };
+    
+    checkLikeStatus();
+  }, [isAuthenticated, wanderlistData.id]);
+
+  const handleShareClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShareDialogOpen(true);
+  };
+
+  const handleLikeClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      setPendingAction("like");
+      setLoginDialogOpen(true);
+      return;
+    }
+    
+    try {
+      if (wanderlistData.id) {
+        await likeWanderListService(wanderlistData.id);
+        setIsLiked(!isLiked);
+        setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
+        showToast(isLiked ? "Removed from favorites" : "Added to favorites", "success");
+      }
+    } catch (error) {
+      console.error("Error liking wanderlist:", error);
+      showToast("Failed to update favorite status", "error");
+    }
+  };
+
+  const handleAddToWanderlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      setPendingAction("add");
+      setLoginDialogOpen(true);
+      return;
+    }
+    
+    if (onAddToWanderlist && wanderlistData.id) {
+      onAddToWanderlist(wanderlistData.id);
+      showToast("Added to your wanderlists", "success");
+    }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareUrl);
+    showToast("Link copied to clipboard", "success");
+    setShareDialogOpen(false);
+  };
+
+  // Create the card component
+  const cardComponent = (
     <Card
       component={Link}
       href={`/wanderlist/${wanderlistData.id}`}
@@ -43,6 +165,25 @@ const WanderlistCard = ({ wanderlistData }: IProps) => {
             backgroundPosition: "center",
           }}
         />
+        
+        {/* Share button - positioned at top right */}
+        <IconButton
+          onClick={handleShareClick}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            '&:hover': {
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+            },
+            width: 36,
+            height: 36,
+          }}
+          aria-label="share"
+        >
+          <ShareIcon fontSize="small" />
+        </IconButton>
 
         {/* No discount in wanderlist data structure */}
 
@@ -90,14 +231,72 @@ const WanderlistCard = ({ wanderlistData }: IProps) => {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {/* Like button */}
+            <IconButton 
+              onClick={handleLikeClick} 
+              size="small" 
+              sx={{ p: 0.5 }}
+              aria-label={isLiked ? "unlike" : "like"}
+            >
+              {isLiked ? 
+                <FavoriteIcon fontSize="small" color="error" /> : 
+                <FavoriteBorderIcon fontSize="small" />}
+            </IconButton>
+            
             <Typography variant="body2" color="text.secondary">
-              {wanderlistData.likeCount || 0} likes
+              {likeCount} likes
             </Typography>
+            
+            {/* Add to Wanderlist button - only show if not the owner */}
+            {!isOwner && onAddToWanderlist && (
+              <Tooltip title="Add to my wanderlists">
+                <IconButton 
+                  onClick={handleAddToWanderlist} 
+                  size="small" 
+                  sx={{ p: 0.5 }}
+                  aria-label="add to wanderlist"
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         </Box>
       </CardContent>
     </Card>
+  );
+
+  return (
+    <>
+      {/* Main Card Component */}
+      {cardComponent}
+      
+      {/* Share Dialog */}
+      <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)}>
+        <DialogTitle>Share Wanderlist</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            value={shareUrl}
+            margin="dense"
+            InputProps={{
+              readOnly: true,
+            }}
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShareDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleCopyLink} variant="contained" color="primary">
+            Copy Link
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Login Dialog */}
+      <LoginDialog open={loginDialogOpen} onClose={handleLoginDialogClose} />
+    </>
   );
 };
 

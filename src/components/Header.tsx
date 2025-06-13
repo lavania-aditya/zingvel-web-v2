@@ -221,6 +221,7 @@ const Header = () => {
                     boxShadow: 1,
                   },
                   cursor: "pointer",
+                  textDecoration: "none",
                 }}
                 component={Link}
                 href="/search"
@@ -230,7 +231,7 @@ const Header = () => {
                   color="text.secondary"
                   sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "100%", fontSize: "1rem" }}
                 >
-                  Search ...
+                  Search hgkjhlkjnlk;mklnjkbhkjbvjh bvhkjbkjnlkn...
                 </Typography>
               </Box>
 
