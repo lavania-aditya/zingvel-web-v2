@@ -21,8 +21,12 @@ import {
   DialogContentText,
   DialogTitle,
   Container,
+  IconButton,
+  useMediaQuery,
+  Drawer,
+  Grid,
 } from "@mui/material";
-import { PhotoCamera as PhotoCameraIcon, DeleteForever as DeleteIcon } from "@mui/icons-material";
+import { Edit as EditIcon, DeleteForever as DeleteIcon } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { useThemeContext } from "@/context/ThemeContext";
@@ -46,30 +50,51 @@ const ProfileClient = () => {
     travelStyle: user?.typeOfTravel?.[0] || "",
     placesTravelledPerYear: user?.placesTravelledYear?.[0] || "",
     phoneNumber: user?.phNumber || "",
+    whatsappNumber: user?.whatsappNumber || "",
   });
 
   // Profile picture state
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(user?.avatarImage || null);
+  const [selectedAvatar, setSelectedAvatar] = useState<string>(user?.avatarImage || "/avatars/avatar1.png");
+
+  // Avatar selection dialog state
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
 
   // Delete account dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [confirmPhoneNumber, setConfirmPhoneNumber] = useState("");
   const [phoneNumberError, setPhoneNumberError] = useState("");
 
-  // Handle profile picture change
-  const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setProfilePicture(file);
+  // Check if device is mobile
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-      // Create a preview URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  // Sample avatar images
+  const avatarOptions = [
+    "/avatars/avatar1.png",
+    "/avatars/avatar2.png",
+    "/avatars/avatar3.png",
+    "/avatars/avatar4.png",
+    "/avatars/avatar5.png",
+    "/avatars/avatar6.png",
+    "/avatars/avatar7.png",
+    "/avatars/avatar8.png",
+    "/avatars/avatar9.png",
+    "/avatars/avatar10.png",
+  ];
+
+  // Handle avatar dialog open
+  const handleOpenAvatarDialog = () => {
+    setAvatarDialogOpen(true);
+  };
+
+  // Handle avatar dialog close
+  const handleCloseAvatarDialog = () => {
+    setAvatarDialogOpen(false);
+  };
+
+  // Handle avatar selection
+  const handleAvatarSelect = (avatar: string) => {
+    setSelectedAvatar(avatar);
+    handleCloseAvatarDialog();
   };
 
   // Handle form input changes
@@ -97,7 +122,7 @@ const ProfileClient = () => {
 
     // Here you would call your API to update the profile
     console.log("Profile data to update:", profileData);
-    console.log("Profile picture to upload:", profilePicture);
+    console.log("Selected avatar:", selectedAvatar);
 
     // Show success toast
     showToast("Profile updated successfully!", "success");
@@ -143,18 +168,14 @@ const ProfileClient = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4, px: 0 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box component="form" onSubmit={handleSubmit}>
         {/* Page Title Card */}
-        <Card
-          sx={{
-            mb: 4,
-            bgcolor: isDarkMode ? "background.paper" : "white",
-            color: isDarkMode ? "text.primary" : "inherit",
-            // px: 0,
-            // backgroundColor: "yellow",
-          }}
-        >
+        <Card sx={{
+          mb: 4,
+          bgcolor: isDarkMode ? "background.paper" : "white",
+          color: isDarkMode ? "text.primary" : "inherit",
+        }}>
           <CardContent>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Personal Information
@@ -165,61 +186,145 @@ const ProfileClient = () => {
           </CardContent>
         </Card>
 
-        {/* Main Content */}
-        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4 }}>
-          {/* Left Column */}
-          <Box sx={{ flex: 1 }}>
-            {/* Profile Picture Section */}
-            <Card
-              sx={{
-                mb: 4,
-                bgcolor: isDarkMode ? "background.paper" : "white",
-                color: isDarkMode ? "text.primary" : "inherit",
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight="medium" gutterBottom>
-                  Profile Picture
-                </Typography>
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 2 }}>
-                  <Avatar
-                    src={previewUrl || undefined}
-                    alt={`${profileData.firstName} ${profileData.lastName}`}
-                    sx={{ width: 150, height: 150, mb: 2 }}
-                  />
-                  <Box sx={{ width: "100%", textAlign: "center" }}>
-                    <input
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      id="profile-picture-upload"
-                      type="file"
-                      onChange={handleProfilePictureChange}
-                    />
-                    <label htmlFor="profile-picture-upload">
-                      <Button variant="contained" component="span" startIcon={<PhotoCameraIcon />} fullWidth>
-                        Upload Photo
-                      </Button>
-                    </label>
-                    <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                      JPG, PNG or GIF. Max size 2MB.
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
+        {/* Main Content Card */}
+        <Card sx={{
+          mb: 4,
+          bgcolor: isDarkMode ? "background.paper" : "white",
+          color: isDarkMode ? "text.primary" : "inherit",
+        }}>
+          <CardContent>
+            {/* Profile Picture with Edit Icon */}
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+              <Box sx={{ position: "relative" }}>
+                <Avatar
+                  src={selectedAvatar}
+                  alt={`${profileData.firstName} ${profileData.lastName}`}
+                  sx={{ width: 150, height: 150 }}
+                />
+                <IconButton
+                  sx={{
+                    position: "absolute",
+                    bottom: 5,
+                    right: 5,
+                    backgroundColor: theme.palette.primary.main,
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.dark,
+                    },
+                    width: 36,
+                    height: 36,
+                  }}
+                  onClick={handleOpenAvatarDialog}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
 
-            {/* Travel Preferences Section */}
-            <Card
-              sx={{
-                mb: 4,
-                bgcolor: isDarkMode ? "background.paper" : "white",
-                color: isDarkMode ? "text.primary" : "inherit",
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight="medium" gutterBottom>
-                  Travel Preferences
-                </Typography>
+            {/* Form Fields in Two Columns */}
+            <Grid container spacing={3}>
+              {/* Left Column */}
+              <Grid item xs={12} md={6} component="div">
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="First Name"
+                  name="firstName"
+                  value={profileData.firstName}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Last Name"
+                  name="lastName"
+                  value={profileData.lastName}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Username"
+                  name="username"
+                  value={profileData.username}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Phone Number"
+                  name="phoneNumber"
+                  value={profileData.phoneNumber}
+                  InputProps={{ readOnly: true }}
+                  helperText="Phone number cannot be changed"
+                />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="WhatsApp Number"
+                  name="whatsappNumber"
+                  value={profileData.whatsappNumber}
+                  InputProps={{ readOnly: true }}
+                  helperText="WhatsApp number cannot be changed"
+                />
+              </Grid>
+
+              {/* Right Column */}
+              <Grid item xs={12} md={6} component="div">
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Email"
+                  name="email"
+                  value={profileData.email}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Date of Birth"
+                  name="dateOfBirth"
+                  type="date"
+                  value={profileData.dateOfBirth}
+                  onChange={handleInputChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="gender-label">Gender</InputLabel>
+                  <Select
+                    labelId="gender-label"
+                    name="gender"
+                    value={profileData.gender}
+                    label="Gender"
+                    onChange={handleSelectChange}
+                  >
+                    <MenuItem value="">Select Gender</MenuItem>
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                    <MenuItem value="prefer-not-to-say">Prefer not to say</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Bio"
+                  name="bio"
+                  multiline
+                  rows={3}
+                  value={profileData.bio}
+                  onChange={handleInputChange}
+                  placeholder="Tell us a bit about yourself..."
+                />
+              </Grid>
+            </Grid>
+
+            {/* Travel Preferences */}
+            <Typography variant="h6" fontWeight="medium" sx={{ mt: 4, mb: 2 }}>
+              Travel Preferences
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6} component="div">
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="travel-style-label">Travel Style</InputLabel>
                   <Select
@@ -237,6 +342,8 @@ const ProfileClient = () => {
                     <MenuItem value="relaxation">Relaxation</MenuItem>
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6} component="div">
                 <FormControl fullWidth margin="normal">
                   <InputLabel id="places-travelled-label">Places Travelled Per Year</InputLabel>
                   <Select
@@ -253,125 +360,22 @@ const ProfileClient = () => {
                     <MenuItem value="10+">More than 10 places</MenuItem>
                   </Select>
                 </FormControl>
-              </CardContent>
-            </Card>
-          </Box>
+              </Grid>
+            </Grid>
 
-          {/* Right Column */}
-          <Box sx={{ flex: 1 }}>
-            {/* Personal Information Section */}
-            <Card
-              sx={{
-                mb: 4,
-                bgcolor: isDarkMode ? "background.paper" : "white",
-                color: isDarkMode ? "text.primary" : "inherit",
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" fontWeight="medium" gutterBottom>
-                  Personal Information
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label="First Name"
-                      name="firstName"
-                      value={profileData.firstName}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label="Last Name"
-                      name="lastName"
-                      value={profileData.lastName}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label="Username"
-                      name="username"
-                      value={profileData.username}
-                      onChange={handleInputChange}
-                      disabled
-                      helperText="Username cannot be changed"
-                    />
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField fullWidth margin="normal" label="Email" name="email" value={profileData.email} onChange={handleInputChange} />
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label="Phone Number"
-                      name="phoneNumber"
-                      value={profileData.phoneNumber}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label="Bio"
-                      name="bio"
-                      multiline
-                      rows={3}
-                      value={profileData.bio}
-                      onChange={handleInputChange}
-                      placeholder="Tell us a bit about yourself..."
-                    />
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <FormControl fullWidth margin="normal">
-                      <InputLabel id="gender-label">Gender</InputLabel>
-                      <Select labelId="gender-label" name="gender" value={profileData.gender} label="Gender" onChange={handleSelectChange}>
-                        <MenuItem value="">Select Gender</MenuItem>
-                        <MenuItem value="male">Male</MenuItem>
-                        <MenuItem value="female">Female</MenuItem>
-                        <MenuItem value="other">Other</MenuItem>
-                        <MenuItem value="prefer-not-to-say">Prefer not to say</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ mb: 2 }}>
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label="Date of Birth"
-                      name="dateOfBirth"
-                      type="date"
-                      value={profileData.dateOfBirth}
-                      onChange={handleInputChange}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
-        </Box>
+            {/* Save Button */}
+            <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+              <Button type="submit" variant="contained" color="primary" size="large">
+                Save Changes
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
 
-        {/* Submit Button */}
-        <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
-          <Button type="submit" variant="contained" color="primary" size="large">
-            Save Changes
-          </Button>
-        </Box>
-
-        {/* Delete Account Section */}
+        {/* Delete Account Card */}
         <Card
           sx={{
-            mt: 4,
-            mb: 3,
+            mb: 4,
             borderColor: theme.palette.error.main,
             borderWidth: 1,
             borderStyle: "solid",
@@ -386,21 +390,92 @@ const ProfileClient = () => {
             <Typography variant="body2" color="error" sx={{ mb: 2 }}>
               Once you delete your account, there is no going back. Please be certain.
             </Typography>
-            <Button variant="outlined" color="error" onClick={handleOpenDeleteDialog} startIcon={<DeleteIcon color="error" />}>
-              <Typography variant="inherit" color="error">
-                Delete Account
-              </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleOpenDeleteDialog}
+              startIcon={<DeleteIcon />}
+            >
+              Delete Account
             </Button>
           </CardContent>
         </Card>
       </Box>
 
+      {/* Avatar Selection Dialog for Desktop */}
+      {!isMobile && (
+        <Dialog open={avatarDialogOpen} onClose={handleCloseAvatarDialog} maxWidth="md">
+          <DialogTitle>Select an Avatar</DialogTitle>
+          <DialogContent>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center", p: 2 }}>
+              {avatarOptions.map((avatar, index) => (
+                <Avatar
+                  key={index}
+                  src={avatar}
+                  alt={`Avatar ${index + 1}`}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    cursor: "pointer",
+                    border: selectedAvatar === avatar ? `2px solid ${theme.palette.primary.main}` : "none",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      boxShadow: "0 0 10px rgba(0,0,0,0.2)"
+                    }
+                  }}
+                  onClick={() => handleAvatarSelect(avatar)}
+                />
+              ))}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseAvatarDialog}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* Avatar Selection Drawer for Mobile */}
+      {isMobile && (
+        <Drawer
+          anchor="bottom"
+          open={avatarDialogOpen}
+          onClose={handleCloseAvatarDialog}
+        >
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>Select an Avatar</Typography>
+            <Box sx={{ display: "flex", overflowX: "auto", gap: 2, pb: 2 }}>
+              {avatarOptions.map((avatar, index) => (
+                <Avatar
+                  key={index}
+                  src={avatar}
+                  alt={`Avatar ${index + 1}`}
+                  sx={{
+                    width: 70,
+                    height: 70,
+                    flexShrink: 0,
+                    cursor: "pointer",
+                    border: selectedAvatar === avatar ? `2px solid ${theme.palette.primary.main}` : "none",
+                  }}
+                  onClick={() => handleAvatarSelect(avatar)}
+                />
+              ))}
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+              <Button onClick={handleCloseAvatarDialog}>Cancel</Button>
+            </Box>
+          </Box>
+        </Drawer>
+      )}
+
       {/* Delete Account Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-        <DialogTitle sx={{ color: theme.palette.error.main }}>Confirm Account Deletion</DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.error.main }}>
+          Confirm Account Deletion
+        </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            This action cannot be undone. All your data will be permanently deleted. To confirm deletion, please enter your phone number below.
+            This action cannot be undone. All your data will be permanently deleted.
+            To confirm deletion, please enter your phone number below.
           </DialogContentText>
           <TextField
             autoFocus
