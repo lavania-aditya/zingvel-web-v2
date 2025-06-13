@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Call the verify OTP API
       const response = await verifyOtpSerive(91, phoneNumber, otp);
-      debugger;
       if (response && response.user && response.token) {
         // Set user data and auth token
         setUser(response.user);

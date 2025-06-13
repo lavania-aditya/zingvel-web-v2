@@ -7,6 +7,7 @@ import { AppProvider } from "@/context/AppContext";
 import { ThemeWrapper } from "@/utils/themeWrapper";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
 import ClientErrorBoundaryWrapper from "@/components/ClientErrorBoundaryWrapper";
 
 const headingFont = Ubuntu({
@@ -40,14 +41,16 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider>
             <AuthProvider>
-              <ThemeWrapper>
-                <CssBaseline />
-                <AppProvider>
-                  <ClientErrorBoundaryWrapper>
-                    <Layout>{children}</Layout>
-                  </ClientErrorBoundaryWrapper>
-                </AppProvider>
-              </ThemeWrapper>
+              <ToastProvider>
+                <ThemeWrapper>
+                  <CssBaseline />
+                  <AppProvider>
+                    <ClientErrorBoundaryWrapper>
+                      <Layout>{children}</Layout>
+                    </ClientErrorBoundaryWrapper>
+                  </AppProvider>
+                </ThemeWrapper>
+              </ToastProvider>
             </AuthProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>

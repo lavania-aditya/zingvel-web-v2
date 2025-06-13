@@ -11,7 +11,7 @@ const groupPackagesByCategory = (packages: IPackageItem[], categories: ICategory
   // Create a map of category IDs to category objects
   const categoryMap = new Map<string, ICategoryItem>();
   categories.forEach((category) => {
-    categoryMap.set(category.id, category);
+    categoryMap.set(category._id, category);
   });
 
   // Create a map to store packages by category
@@ -19,7 +19,7 @@ const groupPackagesByCategory = (packages: IPackageItem[], categories: ICategory
 
   // Initialize with empty arrays for each category
   categories.forEach((category) => {
-    packagesByCategory.set(category.id, []);
+    packagesByCategory.set(category._id, []);
   });
 
   // Special category for packages without a category
@@ -57,8 +57,8 @@ export default async function PackagesPage({ searchParams }: { searchParams: { c
   const categoriesResponse = await getAllCategories(1, 10);
   const packagesResponse = await getAllPackages(1, 10);
 
-  const categoriesData: ICategoryItem[] = categoriesResponse.content || [];
-  const packagesData: IPackageItem[] = packagesResponse.content || [];
+  const categoriesData: ICategoryItem[] = categoriesResponse.items || [];
+  const packagesData: IPackageItem[] = packagesResponse.items || [];
 
   // Filter packages by category if a category parameter is provided
   let filteredPackages = packagesData;
@@ -91,7 +91,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: { c
 
         {/* Render packages by category */}
         {groupedPackages.categorizedPackages.map((group, index) => (
-          <Box key={group.category?.id || index} sx={{ mb: 6 }}>
+          <Box key={group.category?._id || index} sx={{ mb: 6 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
               <Typography variant="h5" component="h2" fontWeight={600}>
                 {group.category?.name}
@@ -107,7 +107,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: { c
 
             <Grid container spacing={3}>
               {group.packages.slice(0, 3).map((pkg) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg.id}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg._id}>
                   <PackageCard packageData={pkg} />
                 </Grid>
               ))}
@@ -124,7 +124,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: { c
 
             <Grid container spacing={3}>
               {groupedPackages.otherPackages.map((pkg) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg.id}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg._id}>
                   <PackageCard packageData={pkg} />
                 </Grid>
               ))}

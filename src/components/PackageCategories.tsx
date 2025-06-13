@@ -5,8 +5,7 @@ import {
   Typography, 
   Button, 
   Container, 
-  Grid,
-  useTheme,
+=  useTheme,
   useMediaQuery
 } from '@mui/material';
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';

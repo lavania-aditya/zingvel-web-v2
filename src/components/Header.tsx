@@ -172,6 +172,7 @@ const Header = () => {
                 maxWidth: 500,
                 border: "1px solid",
                 borderColor: "divider",
+                textDecoration: "none",
                 // backgroundColor: "red",
                 borderRadius: "10",
                 "&:hover": {

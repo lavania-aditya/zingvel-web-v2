@@ -19,7 +19,7 @@ const CategoryBar = (props: IProps) => {
   const categoryParam = searchParams.get("category");
 
   const categoryItem = (category: ICategoryItem | null, idx: number, exploreIcon?: boolean, showAllIcon?: boolean): React.ReactNode => {
-    const isSelected = categoryParam === category?.id;
+    const isSelected = categoryParam === category?._id;
     return (
       <Box
         key={idx}
@@ -35,13 +35,14 @@ const CategoryBar = (props: IProps) => {
           minHeight: 70,
           maxWidth: 80,
           maxHeight: 70,
-          backgroundColor: "white",
+          // backgroundColor: "red",
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 2,
+          // backgroun
         }}
         onClick={() => {
           if (category) {
-            router.push(`/packages/category/${category?.id}`);
+            router.push(`/packages/category/${category?._id}`);
           } else if (showAllIcon) {
             router.push(`/package-categories`);
           } else {
@@ -105,14 +106,15 @@ const CategoryBar = (props: IProps) => {
     <Box
       sx={{
         // backgroundColor: theme.palette.background.paper,
-        mt: 2,
-        py: 1,
+        // pt: 5,
+        // py: 5,
         // px: 2,
         // px: { xs: 2, md: 3 },
         // width: "100%",
         boxSizing: "border-box",
-        // backgroundColor: "red",
+        // backgroundColor: "blue",
         position: "sticky",
+        backgroundColor: theme.palette.background.paper,
       }}
     >
       <Box
@@ -120,8 +122,16 @@ const CategoryBar = (props: IProps) => {
           display: "flex",
           alignItems: "center",
           maxWidth: "xl",
-          mx: "auto",
-          overflow: "hidden",
+          // mx: "auto",
+          // overflow: "hidden",
+          pt: 4,
+          pb: 2,
+          // px: 2,
+          // px: { xs: 2, md: 3 },
+          // width: "100%",
+          // boxSizing: "border-box",
+          // backgroundColor: "red",
+          // position: "sticky",
         }}
       >
         <Box
@@ -138,7 +148,7 @@ const CategoryBar = (props: IProps) => {
             // msOverflowStyle: "none",
             // pr: 2,
             p: 0,
-            pl: 12,
+            pl: 15,
             pr: 2,
           }}
         >

@@ -1,12 +1,13 @@
 "use client";
 
-import { Card, CardMedia, CardContent, Typography, Box, Chip, useTheme, Button, Divider } from "@mui/material";
+import { Card, CardMedia, CardContent, Typography, Box, useTheme, Button, Divider } from "@mui/material";
 import { Check as CheckIcon, Star as StarIcon } from "@mui/icons-material";
 import Link from "next/link";
 import { IPackageItem } from "@/interfaces/IPacakges";
 import { FONTS } from "@/utils/theme";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 import LoginDialog from "./LoginDialog";
 
 interface IProps {
@@ -15,15 +16,12 @@ interface IProps {
 
 const PackageCard = ({ packageData }: IProps) => {
   const theme = useTheme();
-  const [isInterested, setIsInterested] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const { showToast } = useToast();
 
   // Format location string from location object
   const locationString = packageData?.location ? [packageData.location.city, packageData.location.country].filter(Boolean).join(", ") : "";
-
-  // Format duration string
-  const durationString = packageData?.duration ? `${packageData.duration.days}D/${packageData.duration.nights}N` : "";
 
   // Calculate discount percentage
   const hasDiscount = packageData?.salePrice && packageData?.regularPrice && packageData.salePrice < packageData.regularPrice;
@@ -40,9 +38,9 @@ const PackageCard = ({ packageData }: IProps) => {
     e.preventDefault(); // Prevent navigation to package detail page
 
     if (isAuthenticated) {
-      // User is logged in, proceed with showing interest
-      setIsInterested(true);
-      console.log("Interested in package:", packageData.id);
+      // User is logged in, show success toast and log details
+      showToast("Thank you for your interest!", "success");
+      console.log("User ID:", user?.id, "Package ID:", packageData._id);
       // Here you would call your API to register interest
     } else {
       // User is not logged in, open login dialog
@@ -53,6 +51,12 @@ const PackageCard = ({ packageData }: IProps) => {
   // Handle login dialog close
   const handleLoginDialogClose = () => {
     setLoginDialogOpen(false);
+    
+    // Check if user is now authenticated after closing the dialog
+    if (isAuthenticated) {
+      showToast("Thank you for your interest!", "success");
+      console.log("User ID:", user?.id, "Package ID:", packageData._id);
+    }
   };
 
   return (
@@ -71,7 +75,7 @@ const PackageCard = ({ packageData }: IProps) => {
         {/* Card content as a link to package detail page */}
         <Box
           component={Link}
-          href={`/package/${packageData.id}`}
+          href={`/package/${packageData._id}`}
           sx={{
             textDecoration: "none",
             color: "inherit",
@@ -98,7 +102,7 @@ const PackageCard = ({ packageData }: IProps) => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                backgroundColor: "primary.main",
+                // backgroundColor: "primary.main",
                 color: "white",
                 px: 0.8,
                 py: 0.2,
@@ -108,50 +112,112 @@ const PackageCard = ({ packageData }: IProps) => {
                 top: 12,
                 left: 12,
                 fontWeight: "bold",
+                backgroundColor: theme.palette.common.white,
+                opacity: 0.8,
+                borderColor: theme.palette.primary.main,
+                borderWidth: 1,
+                borderStyle: "solid",
+                // color: theme.palette.grey[900],
                 // backgroundColor: theme.palette.mode === "dark" ? "primary.main" : "#8c52ff",
                 // color: "white",
                 // borderRadius: "16px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "bold", mr: 0.5 }}>
+              <Typography variant="body2" sx={{ fontWeight: "bold", color: theme.palette.primary.main, mr: 0.5 }}>
                 {packageData?.rating || 4.9}
               </Typography>
-              <StarIcon sx={{ fontSize: "0.9rem" }} />
+              <StarIcon sx={{ fontSize: "0.9rem", color: theme.palette.primary.main }} />
             </Box>
             {/* )} */}
 
             {/* Duration badge */}
-            <Chip
-              label={durationString || "4N/5D"}
-              size="small"
+            {/* Pricing badge */}
+
+            {/* <Box
               sx={{
+                display: "flex",
+                alignItems: "center",
+                // backgroundColor: "primary.main",
+                color: "white",
+                px: 1,
+                py: 1,
+                // borderRadius: 5,
+                // mr: 1,
                 position: "absolute",
-                top: 12,
-                right: 12,
+                bottom: 0,
+                right: 0,
+                left: 0,
                 fontWeight: "bold",
-                backgroundColor: "white",
-                color: "text.primary",
-                border: "1px solid",
-                borderColor: "divider",
+                backgroundColor: theme.palette.grey[900],
+                opacity: 0.6,
+                // borderTopLeftRadius: 5,
+                // borderTopRightRadius: 5,
+                // backgroundColor: "linear-gradient(to right,rgb(35, 34, 31), #f44336)",
+                // backgroundColor: theme.palette.mode === "dark" ? "primary.main" : "#8c52ff",
+                // color: "white",
+                // borderRadius: "16px",
               }}
-            />
+            > */}
+            {/* <Box sx={{ bgcolor: "#f9f9f9", py: 1.2, px: 2, borderTop: "1px solid", borderColor: "divider" }}> */}
+            {/* <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexGrow: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Typography variant="h4" color={theme.palette.common.white} sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+                    {`₹ ${packageData?.salePrice?.toLocaleString() || "N/A"}`}
+                  </Typography>
+                  <Typography variant="subtitle2" color={theme.palette.common.white} sx={{ ml: 0.5 }}>
+                    / person
+                  </Typography>
+                </Box>
+
+                {hasDiscount && (
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography variant="subtitle2" color={theme.palette.common.white} sx={{ textDecoration: "line-through" }}>
+                      ₹{packageData?.regularPrice?.toLocaleString() || "N/A"}
+                    </Typography>
+                    <Typography variant="subtitle1" color={theme.palette.primary.main} sx={{ fontWeight: "bold", ml: 0.5 }}>
+                      {discountPercentage}% OFF
+                    </Typography>
+                  </Box>
+                )}
+              </Box> */}
+            {/* </Box> */}
           </Box>
 
           <CardContent sx={{ flexGrow: 1, p: 2, pb: 1 }}>
             {/* Package name */}
-            <Typography
-              variant="h6"
-              component="h3"
-              sx={{
-                fontWeight: "bold",
-                fontSize: "1rem",
-                mb: 0.5,
-                fontFamily: FONTS.heading,
-                lineHeight: 1.2,
-              }}
-            >
-              {packageData.name}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <Typography
+                variant="h6"
+                component="h3"
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1rem",
+                  mb: 0.5,
+                  fontFamily: FONTS.heading,
+                  lineHeight: 1.2,
+                }}
+              >
+                {packageData.name}
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                // component="h3"
+                sx={{
+                  // fontWeight: "bold",
+                  // fontSize: "1rem",
+                  // mb: 0.5,
+                  fontFamily: FONTS.heading,
+                  // lineHeight: 1.2,
+                  backgroundColor: theme.palette.primary.light,
+                  color: theme.palette.grey[900],
+                  px: 1,
+                  py: 0.5,
+                  borderRadius: 5,
+                }}
+              >
+                {packageData.duration?.days || "N/A"}D / {packageData.duration?.nights || "N/A"}N
+              </Typography>
+            </Box>
 
             {/* Itinerary summary */}
             <Typography
@@ -165,31 +231,68 @@ const PackageCard = ({ packageData }: IProps) => {
             >
               {locationString || "2N Munnar • 1N Thekkady • 1N Alleppey"}
             </Typography>
-
-            <Divider sx={{ my: 1 }} />
-
             {/* Highlights - more compact */}
-            <Box sx={{ mb: 1 }}>
-              {highlights.slice(0, 2).map((item, index) => (
-                <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 0.3 }}>
-                  <CheckIcon sx={{ color: "#2e7d32", fontSize: "0.8rem", mr: 0.5 }} />
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: theme.palette.text.primary,
-                      fontSize: "0.8rem",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {item}
-                  </Typography>
+
+            {highlights.length > 2 && (
+              <>
+                <Divider sx={{ my: 1 }} />
+
+                <Box sx={{ mb: 1 }}>
+                  {highlights.slice(0, 2).map((item, index) => (
+                    <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 0.3 }}>
+                      <CheckIcon sx={{ color: "#2e7d32", fontSize: "0.8rem", mr: 0.5 }} />
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: theme.palette.text.primary,
+                          fontSize: "0.8rem",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {item}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
+              </>
+            )}
           </CardContent>
 
           {/* Price section - optimized to single row */}
-          <Box sx={{ bgcolor: "#f9f9f9", py: 1.2, px: 2, borderTop: "1px solid", borderColor: "divider" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexGrow: 1,
+              // bgcolor: "#f9f9f9",
+              py: 1.2,
+              px: 2,
+              borderTop: "1px solid",
+              borderColor: "divider",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h4" color={theme.palette.common.black} sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+                {`₹ ${packageData?.salePrice?.toLocaleString() || "N/A"}`}
+              </Typography>
+              <Typography variant="subtitle2" color={theme.palette.common.black} sx={{ ml: 0.5 }}>
+                / person
+              </Typography>
+            </Box>
+
+            {hasDiscount && (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="subtitle2" color={theme.palette.common.black} sx={{ textDecoration: "line-through" }}>
+                  ₹{packageData?.regularPrice?.toLocaleString() || "N/A"}
+                </Typography>
+                <Typography variant="subtitle1" color={theme.palette.primary.main} sx={{ fontWeight: "bold", ml: 0.5 }}>
+                  {discountPercentage}% OFF
+                </Typography>
+              </Box>
+            )}
+          </Box>
+          {/* <Box sx={{ bgcolor: "#f9f9f9", py: 1.2, px: 2, borderTop: "1px solid", borderColor: "divider" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ display: "flex", alignItems: "baseline" }}>
                 <Typography variant="h6" color="primary.main" sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
@@ -211,19 +314,19 @@ const PackageCard = ({ packageData }: IProps) => {
                 </Box>
               )}
             </Box>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* CTA Buttons */}
-        <Box sx={{ display: "flex", gap: 1, p: 2, pt: 1, pb: 1.5 }}>
+        <Box sx={{ display: "flex", gap: 1, px: 2, pb: 1.5 }}>
           {/* WhatsApp Button */}
           <Button
             variant="outlined"
             sx={{
-              minWidth: "auto",
-              width: 50,
-              height: 50,
-              borderRadius: 1,
+              // minWidth: "auto",
+              // width: 50,
+              // height: 50,
+              borderRadius: 2,
               border: "1px solid #e0e0e0",
               p: 0,
               "&:hover": {
@@ -241,28 +344,29 @@ const PackageCard = ({ packageData }: IProps) => {
           <Button
             fullWidth
             variant="contained"
+            color="primary"
             onClick={handleInterestClick}
-            disabled={isInterested}
+            // disabled={isInterested}
             sx={{
-              bgcolor: "#ff8c00",
+              // bgcolor: theme.palette.primary.main,
               color: "white",
-              py: 0,
-              height: 50,
+              // py: 0,
+              // height: 50,
               fontWeight: "bold",
-              textTransform: "none",
-              fontSize: "1rem",
+              // textTransform: "none",
+              // fontSize: "1rem",
               fontFamily: FONTS.heading,
-              borderRadius: 1,
-              "&:hover": {
-                bgcolor: "#e67e00",
-              },
-              "&.Mui-disabled": {
-                bgcolor: "#ffb04c",
-                color: "white",
-              },
+              // borderRadius: 1,
+              // "&:hover": {
+              //   bgcolor: "#e67e00",
+              // },
+              // "&.Mui-disabled": {
+              //   bgcolor: "#ffb04c",
+              //   color: "white",
+              // },
             }}
           >
-            {isInterested ? "Thank you for your interest" : "I am Interested"}
+            REQUEST CALLBACK
           </Button>
         </Box>
       </Card>

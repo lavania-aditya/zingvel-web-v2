@@ -1,3 +1,15 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | Zingvel',
+  description: 'Learn how Zingvel collects, uses, and protects your personal information. Read our privacy policy for details on data handling and your rights.',
+  openGraph: {
+    title: 'Privacy Policy | Zingvel',
+    description: 'Learn how Zingvel collects, uses, and protects your personal information. Read our privacy policy for details on data handling and your rights.',
+    images: ['/legal/privacy-policy.jpg'],
+  },
+};
+
 "use client";
 
 import { Box, Container, Typography, Breadcrumbs, Link as MuiLink } from '@mui/material';
@@ -113,7 +125,7 @@ export default function PrivacyPolicy() {
           </Typography>
           <Typography paragraph>
             We may update our privacy policy from time to time. We will notify you of any changes by posting 
-            the new privacy policy on this page and updating the "Last updated" date.
+            the new privacy policy on this page and updating the &quot;Last updated&quot; date.
           </Typography>
 
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mt: 4 }}>

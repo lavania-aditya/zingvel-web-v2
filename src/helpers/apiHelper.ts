@@ -22,7 +22,7 @@ interface IApiHelper {
 }
 
 const BASE_URLS = {
-  wanderlist: "https://api.zingvel.com/api",
+  wanderlist: "http://localhost:3434/api",
   packages: "http://localhost:8082/api",
 };
 

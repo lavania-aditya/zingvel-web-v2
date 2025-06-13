@@ -20,7 +20,7 @@ export default function DownloadAppBanner() {
         sx={{
           borderRadius: 3,
           overflow: "hidden",
-          backgroundColor: theme.palette.success.main,
+          backgroundColor: theme.palette.secondary.main,
           p: { xs: 3, md: 4 },
         }}
       >
@@ -67,13 +67,13 @@ export default function DownloadAppBanner() {
             }}
           >
             <Box sx={{ mr: 2, display: "flex", alignItems: "center" }}>
-              <GoogleIcon sx={{ color: theme.palette.success.main, fontSize: 40 }} />
+              <GoogleIcon sx={{ color: theme.palette.secondary.main, fontSize: 40 }} />
             </Box>
             <Box sx={{ textAlign: "left" }}>
-              <Typography variant="body1" color={theme.palette.success.main} sx={{ display: "block", fontSize: "0.8rem" }}>
+              <Typography variant="body1" color={theme.palette.secondary.main} sx={{ display: "block", fontSize: "0.8rem" }}>
                 Download On The
               </Typography>
-              <Typography variant="body1" color={theme.palette.success.main} sx={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.2 }}>
+              <Typography variant="body1" color={theme.palette.secondary.main} sx={{ fontWeight: "bold", fontSize: "1rem", lineHeight: 1.2 }}>
                 Google Play Store
               </Typography>
             </Box>
@@ -96,13 +96,13 @@ export default function DownloadAppBanner() {
             }}
           >
             <Box sx={{ mr: 2, display: "flex", alignItems: "center" }}>
-              <IosIcon sx={{ color: theme.palette.success.main, fontSize: 40 }} />
+              <IosIcon sx={{ color: theme.palette.secondary.main, fontSize: 40 }} />
             </Box>
             <Box sx={{ textAlign: "left" }}>
-              <Typography variant="caption" color={theme.palette.success.main} sx={{ display: "block", fontSize: "0.7rem" }}>
+              <Typography variant="caption" color={theme.palette.secondary.main} sx={{ display: "block", fontSize: "0.7rem" }}>
                 Download On The
               </Typography>
-              <Typography variant="body1" color={theme.palette.success.main} sx={{ fontWeight: "bold", lineHeight: 1.2 }}>
+              <Typography variant="body1" color={theme.palette.secondary.main} sx={{ fontWeight: "bold", lineHeight: 1.2 }}>
                 Apple App Store
               </Typography>
             </Box>

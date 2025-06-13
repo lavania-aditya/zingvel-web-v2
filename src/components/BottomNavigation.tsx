@@ -31,6 +31,19 @@ const BottomNavigation = () => {
     { label: 'Inquiries', path: '/inquiries', icon: <InquiriesIcon /> },
   ], []);
 
+  // Check if we should hide the bottom bar on certain pages
+  const shouldHideBottomBar = useMemo(() => {
+    // Hide on package detail pages
+    if (pathname.startsWith('/package/')) {
+      return true;
+    }
+    // Hide on wanderlist detail pages
+    if (pathname.startsWith('/wanderlist/')) {
+      return true;
+    }
+    return false;
+  }, [pathname]);
+
   // Update the selected value based on the current pathname
   useEffect(() => {
     const currentIndex = navItems.findIndex(item => item.path === pathname);
@@ -39,8 +52,8 @@ const BottomNavigation = () => {
     }
   }, [pathname, navItems]);
 
-  // Don't render on larger screens
-  if (!isMobileOrTablet) {
+  // Don't render on larger screens or on pages where bottom bar should be hidden
+  if (!isMobileOrTablet || shouldHideBottomBar) {
     return null;
   }
 

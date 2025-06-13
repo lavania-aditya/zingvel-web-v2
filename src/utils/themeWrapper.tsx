@@ -1,6 +1,5 @@
 "use client";
 import React, { useMemo } from "react";
-import "../styles/app.scss";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeOptions, ThemeProvider as MuiThemeProvider, createTheme, responsiveFontSizes } from "@mui/material/styles";
 import { createAppTheme } from "./theme";

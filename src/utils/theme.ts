@@ -49,16 +49,20 @@ const colors = {
 const getPalette = (mode: PaletteMode): PaletteOptions => ({
   mode,
   primary: {
-    main: colors.primary,
+    main: "#FCA21A",
     light: "#fca21a99", // Lighter shade of primary
     dark: "#E69200", // Darker shade of primary
     contrastText: "#000000",
   },
   secondary: {
-    main: colors.grey,
-    light: "#E8EBED", // Lighter shade of grey
-    dark: "#B6BDC2", // Darker shade of grey
-    contrastText: "#000000",
+    // main: "#DDE2E5", // new color code,
+    // light: "#E8EBED", // Lighter shade of grey
+    // dark: "#B6BDC2", // Darker shade of grey
+    // contrastText: "#000000",
+    main: "#333333",
+    light: "#595959",
+    dark: "#1A1A1A",
+    contrastText: "#FFFFFF",
   },
   background: {
     default: mode === "light" ? colors.defaultBackground : "#121212",

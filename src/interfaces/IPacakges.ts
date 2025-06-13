@@ -1,5 +1,5 @@
 export interface ICategoryItem {
-  id: string;
+  _id: string;
   name: string;
   slug: string;
   description: string;
@@ -52,7 +52,7 @@ export interface IPackageItem {
   createdAt: string;
   updatedAt: string;
   published: boolean;
-  id: string;
+  _id: string;
   status: string;
   categories: string[];
 }

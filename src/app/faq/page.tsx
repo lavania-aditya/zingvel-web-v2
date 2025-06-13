@@ -1,5 +1,17 @@
 "use client";
 
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Frequently Asked Questions | Zingvel',
+  description: 'Find answers to common questions about Zingvel travel services, booking process, cancellation policies, and more.',
+  openGraph: {
+    title: 'Frequently Asked Questions | Zingvel',
+    description: 'Find answers to common questions about Zingvel travel services, booking process, cancellation policies, and more.',
+    images: ['/faq/hero.jpg'],
+  },
+};
+
 import { useState } from 'react';
 import { 
   Box, 
@@ -135,7 +147,7 @@ export default function FAQ() {
         </Typography>
         
         <Typography variant="subtitle1" color="text.secondary" paragraph>
-          Find answers to common questions about Zingvel and our services. If you can't find what you're looking for, please contact our customer support team.
+          Find answers to common questions about Zingvel and our services. If you can&apos;t find what you&apos;re looking for, please contact our customer support team.
         </Typography>
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 4 }}>

@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Box, Button, Container, Typography, Card, Grid } from "@mui/material";
 import GetInTouchForm from "@/components/GetInTouchForm";
 import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
@@ -11,7 +12,16 @@ import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import PartnerBannerWrapper from "@/components/PartnerBannerWrapper";
 import DownloadAppBanner from "@/components/DownloadAppBanner";
 
-// Import the PartnerBanner component wrapper
+export const metadata: Metadata = {
+  title: "Zingvel | Discover Authentic Travel Experiences",
+  description:
+    "Find and book unique travel experiences, packages, and adventures with Zingvel. Connect with local guides and create unforgettable memories.",
+  openGraph: {
+    title: "Zingvel | Discover Authentic Travel Experiences",
+    description: "Find and book unique travel experiences, packages, and adventures with Zingvel.",
+    images: ["/og-image.jpg"],
+  },
+};
 
 export default async function Home() {
   // Fetch categories and packages data server-side
@@ -19,8 +29,8 @@ export default async function Home() {
   const packagesResponse = await getAllPackages(1, 12);
   const wanderlistResponse = await getTrendingWanderlistsService(9);
 
-  const categoriesData: ICategoryItem[] = categoriesResponse?.content || [];
-  const packagesData: IPackageItem[] = packagesResponse?.content || [];
+  const categoriesData: ICategoryItem[] = categoriesResponse?.items || [];
+  const packagesData: IPackageItem[] = packagesResponse?.items || [];
   const wanderlistData: IWanderlistItem[] = wanderlistResponse || [];
 
   return (
@@ -40,7 +50,7 @@ export default async function Home() {
           </Box>
           <Grid container spacing={2}>
             {packagesData.map((pkg) => (
-              <Grid key={pkg.id} size={{ xs: 12, sm: 6, md: 4 }} sx={{}}>
+              <Grid key={pkg._id} size={{ xs: 12, sm: 6, md: 4 }} sx={{}}>
                 <PackageCard packageData={pkg} />
               </Grid>
             ))}
@@ -51,28 +61,16 @@ export default async function Home() {
         <PartnerBannerWrapper />
 
         {/* Featured Destinations - App Style */}
-        <Container sx={{ mb: 4 }}>
+        <Container sx={{ mt: 2, mb: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="h6" component="h2" fontWeight="bold">
+            <Typography variant="h2" component="h2" fontWeight="bold">
               Popular Wanderlists
             </Typography>
             <Button size="small" variant="outlined">
               View All <ChevronRightIcon sx={{ fontSize: 20 }} />
             </Button>
           </Box>
-          <Grid
-            container
-            spacing={2}
-            // sx={{
-            //   display: "flex",
-            //   // gap: 2.5,
-            //   flexWrap: "wrap",
-            //   pb: 2,
-            //   mx: -2,
-            //   px: 2,
-            //   // backgroundColor: "red",
-            // }}
-          >
+          <Grid container spacing={2}>
             {wanderlistData.map((wanderlist) => (
               <Grid
                 key={wanderlist.id}
@@ -93,7 +91,7 @@ export default async function Home() {
 
         {/* Download App Banner */}
         <DownloadAppBanner />
-        
+
         {/* Get in Touch Section */}
         <Container sx={{ my: 6, py: 4 }}>
           <Card sx={{ borderRadius: 3, overflow: "hidden", boxShadow: 3 }}>

@@ -33,7 +33,7 @@ export default function PartnerBanner() {
         sx={{
           borderRadius: 3,
           overflow: "hidden",
-          background: theme.palette.success.main,
+          background: theme.palette.secondary.main,
           position: "relative",
           boxShadow: "0 8px 24px rgba(46, 125, 50, 0.2)",
         }}
@@ -88,7 +88,7 @@ export default function PartnerBanner() {
 
             <Button
               variant="outlined"
-              color="success"
+              color="secondary"
               size="large"
               onClick={handleJoinClick}
               // endIcon={<ArrowForward sx={{ color: theme.palette.common.white }} />}

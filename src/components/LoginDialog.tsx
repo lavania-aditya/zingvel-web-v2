@@ -125,7 +125,6 @@ const LoginDialog = ({ open, onClose }: LoginDialogProps) => {
       // Verify OTP
       setBtnLoader(true);
       const success = await verifyOTP(phoneNumber, otp);
-      debugger;
       if (success) {
         onClose(); // Close dialog on successful verification
       } else {

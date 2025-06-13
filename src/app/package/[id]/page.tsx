@@ -31,52 +31,112 @@ export default async function PackageDetailPage({ params }: Props) {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Full-width image section */}
+      <Box mb={4}>
+        {packageData.media && packageData.media.length > 0 ? (
+          <Paper
+            sx={{
+              position: "relative",
+              height: 500,
+              overflow: "hidden",
+              borderRadius: 2,
+              width: "100%"
+            }}
+          >
+            <Image 
+              src={packageData.media[0].url} 
+              alt={`${packageData.name} - main image`} 
+              fill 
+              style={{ objectFit: "cover" }} 
+            />
+          </Paper>
+        ) : (
+          <Paper
+            sx={{
+              height: 500,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "grey.200",
+              width: "100%"
+            }}
+          >
+            <Typography variant="h6" color="text.secondary">
+              No images available
+            </Typography>
+          </Paper>
+        )}
+      </Box>
+
+      {/* Full-width overview section */}
+      <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Typography variant="h4" component="h1">
+            {packageData.name}
+          </Typography>
+          <Box>
+            <Typography variant="h5" color="primary" fontWeight="bold">
+              ₹{packageData.salePrice}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", textAlign: "right" }}>
+              {packageData.regularPrice > packageData.salePrice && (
+                <>
+                  <Typography component="span" sx={{ textDecoration: "line-through", mr: 1 }}>
+                    ₹{packageData.regularPrice}
+                  </Typography>
+                  <Typography component="span" color="success.main">
+                    {Math.round(((packageData.regularPrice - packageData.salePrice) / packageData.regularPrice) * 100)}% OFF
+                  </Typography>
+                </>
+              )}
+              <Typography variant="caption">Price per person on twin sharing basis</Typography>
+            </Typography>
+          </Box>
+        </Box>
+        
+        <Box display="flex" alignItems="center" gap={1} mb={2}>
+          <LocationOn color="primary" />
+          <Typography variant="subtitle1">
+            {packageData.location.city}, {packageData.location.state}, {packageData.location.country}
+          </Typography>
+        </Box>
+        
+        <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+          <Box display="flex" alignItems="center">
+            <Rating value={packageData.rating} readOnly precision={0.5} />
+            <Typography variant="body2" ml={1}>({packageData.rating})</Typography>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <CalendarMonth fontSize="small" sx={{ mr: 0.5 }} />
+            <Typography variant="body2">
+              {packageData.duration.days} Days / {packageData.duration.nights} Nights
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
+
       <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4 }}>
         {/* Left side - Package details */}
         <Box sx={{ flex: "1 1 auto", maxWidth: { xs: "100%", md: "calc(66.666% - 16px)" } }}>
-          {/* Package Header */}
-          <Box mb={4}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              {packageData.name}
-            </Typography>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <LocationOn color="primary" />
-              <Typography variant="subtitle1">
-                {packageData.location.city}, {packageData.location.state}, {packageData.location.country}
+          {/* Additional Images */}
+          {packageData.media && packageData.media.length > 1 && (
+            <Box mb={4}>
+              <Typography variant="h5" component="h2" fontWeight="bold" mb={2}>
+                Gallery
               </Typography>
-            </Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box display="flex" alignItems="center">
-                <Rating value={packageData.rating} readOnly precision={0.5} />
-                <Typography variant="body2" ml={1}>
-                  ({packageData.rating})
-                </Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                <CalendarMonth fontSize="small" sx={{ mr: 0.5 }} />
-                <Typography variant="body2">
-                  {packageData.duration.days} Days / {packageData.duration.nights} Nights
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Package Images */}
-          <Box mb={4}>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-              {packageData.media && packageData.media.length > 0 ? (
-                packageData.media.slice(0, 3).map((item, index) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {packageData.media.slice(1, 5).map((item, index) => (
                   <Box
                     key={item.mediaId}
                     sx={{
-                      width: index === 0 ? "100%" : { xs: "100%", md: "calc(50% - 8px)" },
+                      width: { xs: "100%", sm: "calc(50% - 8px)" },
                       position: "relative",
                     }}
                   >
                     <Paper
                       sx={{
                         position: "relative",
-                        height: index === 0 ? 400 : 200,
+                        height: 200,
                         overflow: "hidden",
                         borderRadius: 2,
                       }}
@@ -84,60 +144,20 @@ export default async function PackageDetailPage({ params }: Props) {
                       <Image src={item.url} alt={`${packageData.name} - image ${index + 1}`} fill style={{ objectFit: "cover" }} />
                     </Paper>
                   </Box>
-                ))
-              ) : (
-                <Box sx={{ width: "100%" }}>
-                  <Paper
-                    sx={{
-                      height: 300,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      bgcolor: "grey.200",
-                    }}
-                  >
-                    <Typography variant="h6" color="text.secondary">
-                      No images available
-                    </Typography>
-                  </Paper>
-                </Box>
-              )}
+                ))}
+              </Box>
             </Box>
-          </Box>
+          )}
 
-          {/* Price and Booking */}
-          <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-            <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 3 }}>
-              <Box sx={{ flex: "1 1 auto" }}>
-                <Typography variant="h5" gutterBottom>
-                  Package Overview
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  {packageData.description}
-                </Typography>
-              </Box>
-              <Box sx={{ width: { xs: "100%", md: "33.333%" } }}>
-                <Box sx={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center" }}>
-                  <Box mb={2}>
-                    <Typography variant="h5" color="primary" fontWeight="bold">
-                      ₹{packageData.salePrice}
-                    </Typography>
-                    {packageData.regularPrice > packageData.salePrice && (
-                      <Typography variant="body1" sx={{ textDecoration: "line-through" }} color="text.secondary">
-                        ₹{packageData.regularPrice}
-                      </Typography>
-                    )}
-                    <Typography variant="body2" color="success.main">
-                      {Math.round(((packageData.regularPrice - packageData.salePrice) / packageData.regularPrice) * 100)}% OFF
-                    </Typography>
-                  </Box>
-                  <Typography variant="caption" color="text.secondary" mb={2}>
-                    *Price per person on twin sharing basis
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
+          {/* Package Description */}
+          <Box mb={4}>
+            <Paper sx={{ p: 4, borderRadius: 2 }}>
+              <Typography variant="h5" component="h2" fontWeight="bold" mb={2}>
+                About This Package
+              </Typography>
+              <Typography variant="body1">{packageData.description}</Typography>
+            </Paper>
+          </Box>
 
           {/* Package Amenities */}
           {packageData.amenities && packageData.amenities.length > 0 && (
