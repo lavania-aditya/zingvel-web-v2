@@ -2,6 +2,7 @@
 
 import { Card, CardMedia, CardContent, Typography, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { LocationOn as LocationIcon, AccessTime as TimeIcon, Share as ShareIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon, Add as AddIcon } from "@mui/icons-material";
+import MediaFallback from "./MediaFallback";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import React, { useState, useEffect } from "react";
 import { likeWanderListService, checkedWanderlistLiked } from "@/services/SWanderlist";
@@ -145,17 +146,19 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
       {/* Main Card Component */}
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <Box sx={{ position: "relative" }}>
-          <CardMedia
-            component="div"
-            sx={{
-              height: 200,
-              backgroundImage: wanderlistData.city && wanderlistData.city.heroImage ? 
-                `url(${wanderlistData.city.heroImage})` : 
-                "url(/images/placeholder.jpg)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
+          {wanderlistData.city && wanderlistData.city.heroImage ? (
+            <CardMedia
+              component="div"
+              sx={{
+                height: 200,
+                backgroundImage: `url(${wanderlistData.city.heroImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          ) : (
+            <MediaFallback height={200} />
+          )}
           
           {/* Top Right - Share Icon */}
           <IconButton

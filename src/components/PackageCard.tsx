@@ -2,6 +2,7 @@
 
 import { Card, CardMedia, CardContent, Typography, Box, useTheme, Button, Divider } from "@mui/material";
 import { Check as CheckIcon, Star as StarIcon } from "@mui/icons-material";
+import MediaFallback from "./MediaFallback";
 import Link from "next/link";
 import { IPackageItem } from "@/interfaces/IPacakges";
 import { FONTS } from "@/utils/theme";
@@ -85,16 +86,19 @@ const PackageCard = ({ packageData }: IProps) => {
           }}
         >
           <Box sx={{ position: "relative" }}>
-            <CardMedia
-              component="div"
-              sx={{
-                height: 200,
-                backgroundColor: imageUrl ? "transparent" : theme.palette.primary.main,
-                backgroundImage: imageUrl ? `url(${imageUrl})` : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
+            {imageUrl ? (
+              <CardMedia
+                component="div"
+                sx={{
+                  height: 200,
+                  backgroundImage: `url(${imageUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+            ) : (
+              <MediaFallback height={200} />
+            )}
 
             {/* Rating badge */}
 
