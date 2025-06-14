@@ -231,7 +231,7 @@ const Header = () => {
                   color="text.secondary"
                   sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "100%", fontSize: "1rem" }}
                 >
-                  Search hgkjhlkjnlk;mklnjkbhkjbvjh bvhkjbkjnlkn...
+                  Search...
                 </Typography>
               </Box>
 

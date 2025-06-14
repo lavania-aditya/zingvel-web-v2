@@ -337,6 +337,36 @@ const ProfileClient = () => {
           </CardContent>
         </Card>
 
+        {/* Logout Card */}
+        <Card
+          sx={{
+            mb: 4,
+            borderWidth: 1,
+            borderStyle: "solid",
+            borderColor: theme.palette.divider,
+            bgcolor: isDarkMode ? "background.paper" : "white",
+            color: isDarkMode ? "text.primary" : "inherit",
+          }}
+        >
+          <CardContent sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Typography variant="h6" fontWeight="medium">
+              Logout
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={() => {
+                logout();
+                showToast("Logged out successfully", "success");
+                // Redirect to home page after logout
+                window.location.href = "/";
+              }}
+            >
+              Logout
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Delete Account Card */}
         <Card
           sx={{

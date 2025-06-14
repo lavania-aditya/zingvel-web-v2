@@ -3,7 +3,6 @@
 import { Box, Button, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper } from "@mui/material";
 import { Share as ShareIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from "@mui/icons-material";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
-import dynamic from "next/dynamic";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
@@ -11,7 +10,6 @@ import { likeWanderListService, checkedWanderlistLiked } from "@/services/SWande
 import LoginDialog from "./LoginDialog";
 
 // Dynamically import the common inquiry form component
-const CommonInquiryForm = dynamic(() => import("@/components/CommonInquiryForm"), { ssr: false });
 
 interface WanderlistDetailClientProps {
   wanderlistData: IWanderlistItem;
@@ -172,16 +170,16 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
           {/* </Box> */}
 
           {/* Add to Wanderlist button - only show if not the owner */}
-          {/* {!isOwner && (
+          {!isOwner && (
             <Button variant="contained" color="primary" onClick={handleAddToWanderlist} disabled={isOwner}>
               Add to Wanderlist
             </Button>
-          )} */}
+          )}
         </Box>
       </Paper>
 
       {/* Inquiry Form */}
-      <CommonInquiryForm data={wanderlistData} type="wanderlist" formId="wanderlist-user-form" />
+      {/* <CommonInquiryForm data={wanderlistData} type="wanderlist" formId="wanderlist-user-form" /> */}
 
       {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)}>

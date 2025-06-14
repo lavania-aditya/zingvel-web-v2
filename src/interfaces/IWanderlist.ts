@@ -44,8 +44,7 @@ export interface ICityMedia {
 }
 
 export interface IWanderlistItem {
-  _id: string;
-  id?: string; // Keep for backward compatibility
+  id: string;
   name: string;
   travelDate: string;
   numberOfDays: number;

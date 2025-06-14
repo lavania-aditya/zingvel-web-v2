@@ -1,172 +1,399 @@
-import React from 'react';
-import { Box, Typography, TextField, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import { IPackageItem } from '@/interfaces/IPacakges';
+"use client";
 
-interface PackageInquiryFormProps {
-  packageData: IPackageItem;
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button, Paper, useMediaQuery, useTheme } from "@mui/material";
+import { IPackageItem } from "@/interfaces/IPacakges";
+import moment from "moment";
+import { useAuth } from "@/context/AuthContext";
+import { TextInputUi } from "./TextInputUi";
+import {
+  Badge as BadgeIcon,
+  AlternateEmailOutlined as EmailIcon,
+  PhoneOutlined as PhoneIcon,
+  CalendarMonthOutlined as CalendarIcon,
+  PeopleAltOutlined as PeopleIcon,
+} from "@mui/icons-material";
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  travelDate: string;
+  travellerCount: string;
+  message: string;
 }
 
-const PackageInquiryForm: React.FC<PackageInquiryFormProps> = ({ packageData }) => {
+interface PackageInquiryFormProps {
+  data: IPackageItem;
+}
+
+export default function PackageInquiryForm({ data }: PackageInquiryFormProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { user } = useAuth();
+
+  // State for form data
+  const [formData, setFormData] = useState<FormData>({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    phone: user?.phNumber.toString() || "",
+    travelDate: moment().format("YYYY-MM-DD"),
+    travellerCount: "1",
+    message: `Please share the details of the ${data?.name}`,
+  });
+
+  // State for logged in status (mock for now)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  // Effect to check if user is logged in and fetch user data
+  useEffect(() => {
+    // Check for logged in user
+    const checkLoggedInUser = () => {
+      const mockLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+      if (mockLoggedIn) {
+        setIsLoggedIn(true);
+        // Set user data from storage
+        setFormData((prev) => ({
+          ...prev,
+          fullName: localStorage.getItem("userName") || "",
+          email: localStorage.getItem("userEmail") || "",
+          phone: localStorage.getItem("userPhone") || "",
+        }));
+      }
+    };
+
+    checkLoggedInUser();
+  }, []);
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    if (name) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+
+    // Different API calls based on type
+    console.log("Sending package inquiry for:", data?._id);
+    // TODO: Call package inquiry API
+    alert(`Form submitted successfully for ${data?.name}!`);
+  };
+
+  // };
+
+  // Determine if this is a package to show price
+  const packageData = data as IPackageItem;
+
   return (
-    <Box 
-      sx={{ 
-        p: 3, 
-        borderRadius: 2, 
-        bgcolor: 'white',
-        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-        width: '100%',
+    <Box
+      sx={{
+        position: isMobile ? "static" : "sticky",
+        top: isMobile ? "auto" : 24,
+        width: "100%",
+        zIndex: 10,
       }}
+      id="package-inquiry-form  "
     >
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Box>
-          <Typography variant="h6" fontWeight="bold">
-            INR {packageData.salePrice.toLocaleString()}
-          </Typography>
-          {packageData.regularPrice !== packageData.salePrice && (
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography 
-                variant="body2" 
-                sx={{ textDecoration: 'line-through', color: 'text.secondary' }}
-              >
-                INR {packageData.regularPrice.toLocaleString()}
-              </Typography>
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  color: 'success.main',
-                  bgcolor: 'success.light',
-                  px: 1,
-                  py: 0.5,
+      <Paper
+        sx={{
+          p: 3,
+          borderRadius: 2,
+          bgcolor: "white",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          width: "100%",
+        }}
+      >
+        {/* Price section - only shown for packages */}
+        {packageData && (
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+            {/* <Box> */}
+            <Typography variant="h4" fontWeight="bold">
+              ₹ {packageData.salePrice.toLocaleString()}
+            </Typography>
+            {packageData.regularPrice !== packageData.salePrice && (
+              <Box display="flex" alignItems="center" gap={1}>
+                <Typography variant="body2" sx={{ textDecoration: "line-through", color: "text.secondary" }}>
+                  ₹ {packageData.regularPrice.toLocaleString()}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.common.white,
+                    bgcolor: theme.palette.primary.main,
+                    px: 1,
+                    py: 0.5,
+                    borderRadius: 1,
+                    fontWeight: "bold",
+                  }}
+                >
+                  SAVE ₹ {(packageData.regularPrice - packageData.salePrice).toLocaleString()}
+                </Typography>
+              </Box>
+            )}
+            {/* </Box> */}
+
+            {/* {packageData.rating > 0 && ( */}
+            {/* <Box display="flex" alignItems="center" gap={0.5}>
+              <Box
+                component="span"
+                sx={{
+                  // bgcolor: "success.main",
+                  // color: "white",
+                  px: 0.8,
+                  py: 0.3,
                   borderRadius: 1,
-                  fontWeight: 'bold',
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "0.875rem",
+                  fontWeight: "bold",
                 }}
               >
-                SAVE INR {(packageData.regularPrice - packageData.salePrice).toLocaleString()}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-        
-        {packageData.rating > 0 && (
-          <Box display="flex" alignItems="center" gap={0.5}>
-            <Box 
-              component="span" 
-              sx={{ 
-                bgcolor: 'success.main', 
-                color: 'white', 
-                px: 0.8, 
-                py: 0.3, 
-                borderRadius: 1,
-                display: 'flex',
-                alignItems: 'center',
-                fontSize: '0.875rem',
-                fontWeight: 'bold'
-              }}
-            >
-              ★ {packageData.rating.toFixed(1)}
-            </Box>
-            <Typography variant="caption" color="text.secondary">
-              ({Math.floor(Math.random() * 1000)})
-            </Typography>
+                <StarIcon />
+                <Typography variant="subtitle2">{packageData?.rating || "22"}</Typography>
+              </Box> */}
+            {/* <Typography variant="caption" color="text.secondary">
+                ({Math.floor(Math.random() * 1000)})
+              </Typography> */}
+            {/* </Box> */}
+            {/* )} */}
           </Box>
         )}
-      </Box>
 
-      <Box component="form" sx={{ mt: 3 }}>
-        <TextField
-          fullWidth
-          label="Full Name*"
-          variant="outlined"
-          margin="normal"
-          required
-          size="small"
-        />
-        
-        <TextField
-          fullWidth
-          label="Email*"
-          variant="outlined"
-          margin="normal"
-          required
-          type="email"
-          size="small"
-        />
-        
-        <Box display="flex" gap={2} mt={2}>
-          <FormControl sx={{ width: '30%' }} size="small">
-            <InputLabel id="country-code-label">+91</InputLabel>
-            <Select
-              labelId="country-code-label"
-              id="country-code"
-              value="+91"
-              label="+91"
-            >
-              <MenuItem value="+91">+91</MenuItem>
-              <MenuItem value="+1">+1</MenuItem>
-              <MenuItem value="+44">+44</MenuItem>
-            </Select>
-          </FormControl>
-          
-          <TextField
-            sx={{ width: '70%' }}
+        {/* move share and like here */}
+        <></>
+
+        {/* Title */}
+        <Typography variant="h5" fontWeight="bold" mb={3}>
+          {isLoggedIn ? "Welcome Back!" : "Join the Adventure"}
+        </Typography>
+
+        {/* For demo purposes only - these buttons toggle mock login state */}
+        {/* <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+          <Button 
+            variant={isLoggedIn ? "text" : "contained"} 
+            size="small" 
+            color="primary"
+            onClick={handleMockLogin}
+            disabled={isLoggedIn}
+            sx={{ minWidth: '80px' }}
+          >
+            Demo: Login
+          </Button>
+          <Button 
+            variant={!isLoggedIn ? "text" : "contained"} 
+            size="small" 
+            color="warning"
+            onClick={handleMockLogout}
+            disabled={!isLoggedIn}
+            sx={{ minWidth: '80px' }}
+          >
+            Demo: Logout
+          </Button>
+        </Box> */}
+
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextInputUi
+            // fullWidth
+            label="First Name*"
+            // variant="outlined"
+            // margin="normal"
+            required
+            // size="small"
+            name="firstName"
+            value={formData.firstName}
+            handleValueChange={handleInputChange}
+            disabled={isLoggedIn}
+            startAdornment={<BadgeIcon />}
+          />
+
+          <TextInputUi
+            // fullWidth
+            label="Last Name*"
+            // variant="outlined"
+            // margin="normal"
+            required
+            // size="small"
+            name="lastName"
+            value={formData.lastName}
+            handleValueChange={handleInputChange}
+            disabled={isLoggedIn}
+            startAdornment={<BadgeIcon />}
+          />
+
+          <TextInputUi
+            // fullWidth
+            label="Email*"
+            // variant="outlined"
+            // margin="normal"
+            required
+            type="email"
+            // size="small"
+            name="email"
+            value={formData.email}
+            handleValueChange={handleInputChange}
+            disabled={isLoggedIn}
+            startAdornment={<EmailIcon />}
+          />
+
+          <TextInputUi
             label="Your Phone*"
-            variant="outlined"
             required
-            size="small"
+            // size="small"
+            name="phone"
+            value={formData.phone}
+            handleValueChange={handleInputChange}
+            disabled={isLoggedIn}
+            startAdornment={<PhoneIcon />}
           />
-        </Box>
-        
-        <Box display="flex" gap={2} mt={2}>
-          <TextField
-            sx={{ width: '50%' }}
+
+          <TextInputUi
+            // sx={{ flex: 1 }}
             label="Travel Date*"
-            variant="outlined"
+            // variant="outlined"
             required
-            size="small"
+            // size="small"
             type="date"
-            InputLabelProps={{ shrink: true }}
+            // InputLabelProps={{ shrink: true }}
+            name="travelDate"
+            value={formData.travelDate}
+            handleValueChange={handleInputChange}
+            startAdornment={<CalendarIcon />}
           />
-          
-          <TextField
-            sx={{ width: '50%' }}
+
+          {/* <Box sx={{ mt: 2, mb: 1 }}> */}
+          {/* <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}> */}
+          {/* <TextField
+                sx={{ flex: 1 }}
+                label="Travel Date*"
+                variant="outlined"
+                required
+                // size="small"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                name="travelDate"
+                value={formData.travelDate}
+                onChange={handleInputChange}
+              /> */}
+
+          <TextInputUi
+            // sx={{ flex: 1 }}
             label="Traveller Count*"
-            variant="outlined"
+            // variant="outlined"
             required
-            size="small"
+            // size="small"
             type="number"
-            InputProps={{
-              inputProps: { min: 1 }
-            }}
+            // InputProps={{
+            //   inputProps: { min: 1 },
+            // }}
+            name="travellerCount"
+            value={formData.travellerCount}
+            handleValueChange={handleInputChange}
+            startAdornment={<PeopleIcon />}
           />
+          {/* </Box> */}
+          {/* </Box> */}
+
+          {/* <Box sx={{ mt: 2, mb: 1 }}> */}
+          {/* <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}> */}
+          <TextInputUi
+            // fullWidth
+            label="Message..."
+            // variant="outlined"
+            // margin="normal"
+            multiline
+            rows={4}
+            size="small"
+            name="message"
+            value={formData.message}
+            handleValueChange={handleInputChange}
+          />
+          {/* </Box> */}
+          {/* </Box> */}
+
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{
+              mt: 2,
+              py: 1.5,
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "1rem",
+            }}
+            type="submit"
+          >
+            Request Callback
+          </Button>
+
+          {!isLoggedIn && (
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1, textAlign: "center" }}>
+              By submitting, you agree to our Terms of Service and Privacy Policy
+            </Typography>
+          )}
         </Box>
-        
-        <TextField
-          fullWidth
-          label="Message..."
-          variant="outlined"
-          margin="normal"
-          multiline
-          rows={4}
-          size="small"
-        />
-        
-        <Button 
-          fullWidth 
-          variant="contained" 
-          color="warning" 
-          sx={{ 
-            mt: 2, 
-            py: 1.5,
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: '1rem'
+      </Paper>
+
+      {/* Mobile sticky bottom bar - only visible on mobile */}
+      {isMobile && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "white",
+            padding: 2,
+            boxShadow: "0px -2px 10px rgba(0, 0, 0, 0.1)",
+            zIndex: 1000,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          Send Enquiry
-        </Button>
-      </Box>
+          {
+            // Package bottom bar
+            <>
+              <Box>
+                <Box sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>₹{packageData?.salePrice}</Box>
+                <Box sx={{ textDecoration: "line-through", color: "text.secondary", fontSize: "0.9rem" }}>₹{packageData?.regularPrice}</Box>
+              </Box>
+              <Box
+                component="button"
+                sx={{
+                  backgroundColor: "warning.main",
+                  color: "white",
+                  padding: "10px 20px",
+                  borderRadius: 1,
+                  border: "none",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  // Scroll to inquiry form
+                  const element = document.getElementById("package-inquiry-form");
+                  if (element) {
+                    element.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+              >
+                Request Callback
+              </Box>
+            </>
+          }
+        </Box>
+      )}
     </Box>
   );
-};
-
-export default PackageInquiryForm;
+}

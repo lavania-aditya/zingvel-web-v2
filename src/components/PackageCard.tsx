@@ -343,27 +343,14 @@ const PackageCard = ({ packageData }: IProps) => {
           {/* I am Interested Button */}
           <Button
             fullWidth
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={handleInterestClick}
             // disabled={isInterested}
             sx={{
-              // bgcolor: theme.palette.primary.main,
-              color: "white",
-              // py: 0,
-              // height: 50,
+              color: "primary.main",
               fontWeight: "bold",
-              // textTransform: "none",
-              // fontSize: "1rem",
               fontFamily: FONTS.heading,
-              // borderRadius: 1,
-              // "&:hover": {
-              //   bgcolor: "#e67e00",
-              // },
-              // "&.Mui-disabled": {
-              //   bgcolor: "#ffb04c",
-              //   color: "white",
-              // },
             }}
           >
             REQUEST CALLBACK

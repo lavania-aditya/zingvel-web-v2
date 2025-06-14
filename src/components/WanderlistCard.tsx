@@ -1,8 +1,7 @@
 "use client";
 
-import { Card, CardMedia, CardContent, Typography, Box, useTheme, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
+import { Card, CardMedia, CardContent, Typography, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { LocationOn as LocationIcon, AccessTime as TimeIcon, Share as ShareIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon, Add as AddIcon } from "@mui/icons-material";
-import Link from "next/link";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import React, { useState, useEffect } from "react";
 import { likeWanderListService, checkedWanderlistLiked } from "@/services/SWanderlist";
@@ -18,7 +17,6 @@ interface IProps {
 }
 
 const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
-  const theme = useTheme();
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useToast();
   const [isLiked, setIsLiked] = useState<boolean>(false);
@@ -50,16 +48,21 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
             console.error("Error liking wanderlist:", error);
             showToast("Failed to update favorite status", "error");
           }
-        } else if (pendingAction === "add" && onAddToWanderlist) {
-          onAddToWanderlist(wanderlistData.id);
-          showToast("Added to your wanderlists", "success");
+        } else if (pendingAction === "add") {
+          // Console log the user ID and wanderlist ID after login as requested
+          console.log("User ID after login:", user?.id, "Wanderlist ID:", wanderlistData.id);
+          
+          if (onAddToWanderlist) {
+            onAddToWanderlist(wanderlistData.id);
+            showToast("Added to your wanderlists", "success");
+          }
         }
         setPendingAction(null);
       }
     };
 
     handlePendingAction();
-  }, [isAuthenticated, pendingAction, wanderlistData.id, onAddToWanderlist, showToast]);
+  }, [isAuthenticated, pendingAction, wanderlistData.id, onAddToWanderlist, showToast, user?.id]);
 
   useEffect(() => {
     // Set the share URL when the component mounts
@@ -121,156 +124,149 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
       return;
     }
     
-    if (onAddToWanderlist && wanderlistData.id) {
-      onAddToWanderlist(wanderlistData.id);
-      showToast("Added to your wanderlists", "success");
+    if (wanderlistData.id) {
+      // Console log the user ID and wanderlist ID as requested
+      console.log("User ID:", user?.id, "Wanderlist ID:", wanderlistData.id);
+      
+      if (onAddToWanderlist) {
+        onAddToWanderlist(wanderlistData.id);
+        showToast("Added to your wanderlists", "success");
+      }
     }
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);
     showToast("Link copied to clipboard", "success");
-    setShareDialogOpen(false);
   };
-
-  // Create the card component
-  const cardComponent = (
-    <Card
-      component={Link}
-      href={`/wanderlist/${wanderlistData.id}`}
-      sx={{
-        borderRadius: 3,
-        overflow: "hidden",
-        boxShadow: theme.shadows[2],
-        // transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        textDecoration: "none",
-        color: "inherit",
-        // "&:hover": {
-        //   transform: "translateY(-4px)",
-        //   boxShadow: theme.shadows[4],
-        // },
-      }}
-    >
-      <Box sx={{ position: "relative" }}>
-        <CardMedia
-          component="div"
-          sx={{
-            height: 200,
-            backgroundColor: theme.palette.primary.main,
-            backgroundImage: wanderlistData.city && wanderlistData.city.heroImage ? `url(${wanderlistData.city.heroImage})` : "none",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        
-        {/* Share button - positioned at top right */}
-        <IconButton
-          onClick={handleShareClick}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-            '&:hover': {
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
-            },
-            width: 36,
-            height: 36,
-          }}
-          aria-label="share"
-        >
-          <ShareIcon fontSize="small" />
-        </IconButton>
-
-        {/* No discount in wanderlist data structure */}
-
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
-            p: 2,
-            pt: 3,
-          }}
-        >
-          <Typography variant="h6" component="h3" sx={{ color: "white", fontWeight: "bold" }}>
-            {wanderlistData.name}
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
-            <LocationIcon sx={{ color: "white", fontSize: "0.875rem", mr: 0.5, opacity: 0.9 }} />
-            <Typography variant="body2" sx={{ color: "white", opacity: 0.9 }}>
-              {wanderlistData.city ? wanderlistData.city.city : ""}
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-
-      <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-          <TimeIcon sx={{ color: "text.secondary", fontSize: "0.875rem", mr: 0.5 }} />
-          <Typography variant="body2" color="text.secondary">
-            {wanderlistData.travelDate ? new Date(wanderlistData.travelDate).toLocaleDateString() : ""}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            {wanderlistData.numberOfDays} days
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: "flex", alignItems: "baseline", mt: 1, justifyContent: "space-between" }}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography variant="body2" color="text.secondary">
-              {wanderlistData.activities?.length || 0} activities
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {/* Like button */}
-            <IconButton 
-              onClick={handleLikeClick} 
-              size="small" 
-              sx={{ p: 0.5 }}
-              aria-label={isLiked ? "unlike" : "like"}
-            >
-              {isLiked ? 
-                <FavoriteIcon fontSize="small" color="error" /> : 
-                <FavoriteBorderIcon fontSize="small" />}
-            </IconButton>
-            
-            <Typography variant="body2" color="text.secondary">
-              {likeCount} likes
-            </Typography>
-            
-            {/* Add to Wanderlist button - only show if not the owner */}
-            {!isOwner && onAddToWanderlist && (
-              <Tooltip title="Add to my wanderlists">
-                <IconButton 
-                  onClick={handleAddToWanderlist} 
-                  size="small" 
-                  sx={{ p: 0.5 }}
-                  aria-label="add to wanderlist"
-                >
-                  <AddIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <>
       {/* Main Card Component */}
-      {cardComponent}
+      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+        <Box sx={{ position: "relative" }}>
+          <CardMedia
+            component="div"
+            sx={{
+              height: 200,
+              backgroundImage: wanderlistData.city && wanderlistData.city.heroImage ? 
+                `url(${wanderlistData.city.heroImage})` : 
+                "url(/images/placeholder.jpg)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          
+          {/* Top Right - Share Icon */}
+          <IconButton
+            onClick={handleShareClick}
+            sx={{
+              position: "absolute",
+              top: 5,
+              right: 5,
+              bgcolor: "rgba(255,255,255,0.8)",
+              "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
+            }}
+            size="small"
+            aria-label="share"
+          >
+            <ShareIcon fontSize="small" />
+          </IconButton>
+          
+          {/* Bottom - City, State */}
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
+              p: 2,
+              pt: 3,
+            }}
+          >
+            <Typography variant="h6" component="h3" sx={{ color: "white", fontWeight: "bold" }}>
+              {wanderlistData.name}
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
+              <LocationIcon sx={{ color: "white", fontSize: "0.875rem", mr: 0.5, opacity: 0.9 }} />
+              <Typography variant="body2" sx={{ color: "white", opacity: 0.9 }}>
+                {wanderlistData.city ? wanderlistData.city.city : ""}
+                {wanderlistData.city && wanderlistData.city.state ? `, ${wanderlistData.city.state}` : ""}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
+          {/* Date, Time, and Days in one row */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <TimeIcon sx={{ color: "text.secondary", fontSize: "0.875rem", mr: 0.5 }} />
+              <Typography variant="body2" color="text.secondary">
+                {wanderlistData.travelDate ? new Date(wanderlistData.travelDate).toLocaleDateString() : ""}
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {wanderlistData.numberOfDays} days
+            </Typography>
+          </Box>
+          
+          {/* Created by username */}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="body2" color="text.secondary">
+              Created by: {wanderlistData.userName || "Anonymous"}
+            </Typography>
+          </Box>
+          
+          {/* Count of things */}
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              {wanderlistData.activities?.length || 0} activities
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {wanderlistData.places?.length || 0} places
+            </Typography>
+            {wanderlistData.restaurants?.length > 0 && (
+              <Typography variant="body2" color="text.secondary">
+                {wanderlistData.restaurants.length} restaurants
+              </Typography>
+            )}
+          </Box>
+          
+          {/* Like and Add to Wanderlist buttons */}
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <IconButton 
+                onClick={handleLikeClick} 
+                size="small"
+                aria-label={isLiked ? "unlike" : "like"}
+              >
+                {isLiked ? 
+                  <FavoriteIcon fontSize="small" color="error" /> : 
+                  <FavoriteBorderIcon fontSize="small" />}
+              </IconButton>
+              <Typography variant="body2" color="text.secondary">
+                {likeCount}
+              </Typography>
+            </Box>
+            
+            {/* Add to Wanderlist button - only show if not the owner */}
+            {!isOwner && (
+              <Button 
+                variant="outlined" 
+                color="primary" 
+                size="small"
+                onClick={handleAddToWanderlist}
+                startIcon={<AddIcon />}
+                sx={{ color: "primary.main" }}
+              >
+                Add to Wanderlist
+              </Button>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
       
       {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)}>

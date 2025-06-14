@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Box } from '@mui/material';
-import { IPackageItem } from '@/interfaces/IPacakges';
-import dynamic from 'next/dynamic';
+import { Box } from "@mui/material";
+import { IPackageItem } from "@/interfaces/IPacakges";
+import dynamic from "next/dynamic";
 
 // Dynamically import the common inquiry form component
-const CommonInquiryForm = dynamic(() => import('@/components/CommonInquiryForm'), { ssr: false });
+const PackageInquiryForm = dynamic(() => import("@/components/PackageInquiryForm"), { ssr: false });
 
 interface PackageDetailClientProps {
   packageData: IPackageItem;
@@ -13,21 +13,17 @@ interface PackageDetailClientProps {
 
 export default function PackageDetailClient({ packageData }: PackageDetailClientProps) {
   return (
-    <Box 
-      sx={{ 
-        width: { xs: '100%', md: '33.333%' },
-        position: { xs: 'static', md: 'sticky' },
-        top: { md: '24px' },
-        alignSelf: 'flex-start',
-        height: 'fit-content'
-      }} 
+    <Box
+      sx={{
+        width: { xs: "100%", md: "33.333%" },
+        position: { xs: "static", md: "sticky" },
+        top: { md: "24px" },
+        alignSelf: "flex-start",
+        height: "fit-content",
+      }}
       id="package-inquiry-form"
     >
-      <CommonInquiryForm 
-        data={packageData} 
-        type="package" 
-        formId="package-inquiry-form" 
-      />
+      <PackageInquiryForm data={packageData} />
     </Box>
   );
 }

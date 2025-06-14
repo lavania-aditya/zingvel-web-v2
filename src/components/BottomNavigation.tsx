@@ -75,6 +75,9 @@ const BottomNavigation = () => {
         onChange={(_, newValue) => {
           setValue(newValue);
         }}
+        sx={{
+          py: 1, // Add vertical padding
+        }}
       >
         {navItems.map((item) => (
           <BottomNavigationAction
@@ -83,6 +86,15 @@ const BottomNavigation = () => {
             icon={item.icon}
             component={Link}
             href={item.path}
+            sx={{
+              '& .MuiSvgIcon-root': {
+                fontSize: '1.5rem', // Make icons bigger
+              },
+              '& .MuiBottomNavigationAction-label': {
+                fontSize: '0.75rem',
+                marginTop: '4px',
+              }
+            }}
           />
         ))}
       </MuiBottomNavigation>
