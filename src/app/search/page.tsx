@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import {
   Box,
-  InputAdornment,
-  Grid,
   Card,
   CardContent,
   CardMedia,
@@ -17,16 +15,11 @@ import {
   Slider,
   Paper,
   Stack,
-  useTheme,
-  useMediaQuery,
   Typography,
   TextField,
 } from "@mui/material";
-import { TextUi } from "@/components/customUi/TextUi";
-import { TextInputUi } from "@/components/customUi/TextInputUi";
 import AdaptiveDialog from "@/components/AdaptiveDialog";
 import {
-  Search as SearchIcon,
   LocationOn as LocationIcon,
   Person as PersonIcon,
   Flight as FlightIcon,
@@ -109,8 +102,6 @@ interface SearchFilters {
 }
 
 export default function SearchPage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { addToSearchHistory, searchHistory } = useAppContext();
 
   // State for search query and results
@@ -367,9 +358,9 @@ export default function SearchPage() {
         </Paper>
       )}
 
-      <Grid container spacing={3}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {/* Search Results */}
-        <Grid xs={12}>
+        <Box sx={{ width: '100%' }}>
           {searchResults.length === 0 ? (
             <Paper elevation={2} sx={{ p: 4, textAlign: "center", borderRadius: "0.625rem" }}>
               <Typography variant="h6">No results found</Typography>
@@ -378,9 +369,17 @@ export default function SearchPage() {
               </Typography>
             </Paper>
           ) : (
-            <Grid container spacing={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
               {searchResults.map((result) => (
-                <Grid xs={12} sm={6} md={4} key={result.id}>
+                <Box 
+                  key={result.id}
+                  sx={{
+                    width: {
+                      xs: '100%',
+                      sm: 'calc(50% - 12px)',
+                      md: 'calc(33.333% - 16px)'
+                    }
+                  }}>
                   <Card elevation={2} sx={{ height: "100%", display: "flex", flexDirection: "column", borderRadius: "0.625rem" }}>
                     <CardMedia
                       sx={{
@@ -426,12 +425,12 @@ export default function SearchPage() {
                       </Box>
                     </CardContent>
                   </Card>
-                </Grid>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           )}
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 }

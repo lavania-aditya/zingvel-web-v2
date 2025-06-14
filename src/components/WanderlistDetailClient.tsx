@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, IconButton, Tooltip, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import { Box, Button, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper } from "@mui/material";
 import { Share as ShareIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from "@mui/icons-material";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import dynamic from "next/dynamic";
@@ -26,16 +26,16 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
   const [loginDialogOpen, setLoginDialogOpen] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>("");
   const [pendingAction, setPendingAction] = useState<"like" | "add" | null>(null);
-  
+
   // Check if the current user is the creator of the wanderlist
   const isOwner = user?.id === wanderlistData.userId;
 
   useEffect(() => {
     // Set the share URL when the component mounts
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setShareUrl(`${window.location.origin}/wanderlist/${wanderlistData.id}`);
     }
-    
+
     // Check if the user has liked this wanderlist
     const checkLikeStatus = async () => {
       if (isAuthenticated && wanderlistData.id) {
@@ -47,7 +47,7 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
         }
       }
     };
-    
+
     checkLikeStatus();
   }, [isAuthenticated, wanderlistData.id]);
 
@@ -61,12 +61,12 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
       setLoginDialogOpen(true);
       return;
     }
-    
+
     try {
       if (wanderlistData.id) {
         await likeWanderListService(wanderlistData.id);
         setIsLiked(!isLiked);
-        setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
+        setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
         showToast(isLiked ? "Removed from favorites" : "Added to favorites", "success");
       }
     } catch (error) {
@@ -81,17 +81,17 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
       setLoginDialogOpen(true);
       return;
     }
-    
+
     // Implementation for adding to wanderlist would go here
     showToast("Added to your wanderlists", "success");
   };
-  
+
   // Handle login dialog close
   const handleLoginDialogClose = () => {
     setLoginDialogOpen(false);
     setPendingAction(null);
   };
-  
+
   // Effect to handle post-login actions
   useEffect(() => {
     const handlePendingAction = async () => {
@@ -100,7 +100,7 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
           try {
             await likeWanderListService(wanderlistData.id);
             setIsLiked(true);
-            setLikeCount(prevCount => prevCount + 1);
+            setLikeCount((prevCount) => prevCount + 1);
             showToast("Added to favorites", "success");
           } catch (error) {
             console.error("Error liking wanderlist:", error);
@@ -138,42 +138,51 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
       id="wanderlist-user-form"
     >
       {/* Action buttons row */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-        {/* Share button on the left */}
-        <Tooltip title="Share Wanderlist">
+      {/* Share button on the left */}
+      {/* <Tooltip title="Share Wanderlist"> */}
+
+      {/* </Tooltip> */}
+
+      <Paper
+        sx={{
+          px: 3,
+          py: 1.5,
+          borderRadius: 2,
+          bgcolor: "white",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          width: "100%",
+        }}
+        elevation={3}
+      >
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {/* <Typography variant="body2" color="text.secondary">
+            {likeCount}
+          </Typography> */}
+          {/* Like button */}
+          {/* <Box sx={{ display: "flex", alignItems: "center" }}> */}
           <IconButton onClick={handleShareClick} color="primary">
             <ShareIcon />
           </IconButton>
-        </Tooltip>
-        
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          {/* Like button */}
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton onClick={handleLikeClick} color={isLiked ? "error" : "default"}>
-              {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-            </IconButton>
-            <Typography variant="body2" color="text.secondary">
+          <IconButton onClick={handleLikeClick} color={isLiked ? "error" : "default"}>
+            {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
               {likeCount}
             </Typography>
-          </Box>
-          
+          </IconButton>
+          {/* </Box> */}
+
           {/* Add to Wanderlist button - only show if not the owner */}
-          {!isOwner && (
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleAddToWanderlist}
-              disabled={isOwner}
-            >
+          {/* {!isOwner && (
+            <Button variant="contained" color="primary" onClick={handleAddToWanderlist} disabled={isOwner}>
               Add to Wanderlist
             </Button>
-          )}
+          )} */}
         </Box>
-      </Box>
-      
+      </Paper>
+
       {/* Inquiry Form */}
       <CommonInquiryForm data={wanderlistData} type="wanderlist" formId="wanderlist-user-form" />
-      
+
       {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)}>
         <DialogTitle>Share Wanderlist</DialogTitle>
@@ -195,7 +204,7 @@ export default function WanderlistDetailClient({ wanderlistData }: WanderlistDet
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Login Dialog */}
       <LoginDialog open={loginDialogOpen} onClose={handleLoginDialogClose} />
     </Box>

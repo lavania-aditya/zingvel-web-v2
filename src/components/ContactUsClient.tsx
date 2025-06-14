@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Container, Typography, TextField, Button, Grid, Paper, Snackbar, Alert, Link as MuiLink } from "@mui/material";
+import { Box, Container, Typography, TextField, Button, Paper, Snackbar, Alert, Link as MuiLink } from "@mui/material";
 import Link from "next/link";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EmailIcon from "@mui/icons-material/Email";
@@ -70,9 +70,9 @@ export default function ContactUsClient() {
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
           {/* Contact Form */}
-          <Grid item xs={12} md={8}>
+          <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 66.67%' } }}>
             <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
               <Typography variant="h4" component="h2" gutterBottom>
                 Send Us a Message
@@ -82,17 +82,19 @@ export default function ContactUsClient() {
               </Typography>
 
               <Box component="form" onSubmit={handleSubmit} noValidate>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField required fullWidth label="Your Name" name="name" value={formData.name} onChange={handleChange} />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField required fullWidth label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} />
-                  </Grid>
-                  <Grid item xs={12}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <TextField required fullWidth label="Your Name" name="name" value={formData.name} onChange={handleChange} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <TextField required fullWidth label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} />
+                    </Box>
+                  </Box>
+                  <Box>
                     <TextField fullWidth label="Subject" name="subject" value={formData.subject} onChange={handleChange} />
-                  </Grid>
-                  <Grid item xs={12}>
+                  </Box>
+                  <Box>
                     <TextField
                       required
                       fullWidth
@@ -103,19 +105,19 @@ export default function ContactUsClient() {
                       value={formData.message}
                       onChange={handleChange}
                     />
-                  </Grid>
-                  <Grid item xs={12}>
+                  </Box>
+                  <Box>
                     <Button type="submit" variant="contained" size="large" sx={{ mt: 2 }}>
                       Send Message
                     </Button>
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
               </Box>
             </Paper>
-          </Grid>
+          </Box>
 
           {/* Contact Information */}
-          <Grid item xs={12} md={4}>
+          <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 33.33%' } }}>
             <Paper elevation={3} sx={{ p: 4, borderRadius: 2, height: "100%" }}>
               <Typography variant="h4" component="h2" gutterBottom>
                 Contact Information
@@ -169,8 +171,8 @@ export default function ContactUsClient() {
                 <Typography variant="body1">Sunday: Closed</Typography>
               </Box>
             </Paper>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         {/* FAQ Link */}
         <Box sx={{ mt: 6, textAlign: "center" }}>

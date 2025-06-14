@@ -40,16 +40,11 @@ export default async function WanderlistDetailPage({ params }: Props) {
             height: 500,
             overflow: "hidden",
             borderRadius: 2,
-            width: "100%"
+            width: "100%",
           }}
         >
           {wanderlistData.city?.heroImage ? (
-            <Image 
-              src={wanderlistData.city.heroImage} 
-              alt={wanderlistData.city?.city || "City Image"} 
-              fill 
-              style={{ objectFit: "cover" }} 
-            />
+            <Image src={wanderlistData.city.heroImage} alt={wanderlistData.city?.city || "City Image"} fill style={{ objectFit: "cover" }} />
           ) : (
             <Box
               sx={{
@@ -68,40 +63,41 @@ export default async function WanderlistDetailPage({ params }: Props) {
         </Paper>
       </Box>
 
-      {/* Full-width overview section */}
-      <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h4" component="h1">
-            {wanderlistData.name}
-          </Typography>
-        </Box>
-        
-        <Box display="flex" alignItems="center" gap={1} mb={2}>
-          <LocationOn color="primary" />
-          <Typography variant="subtitle1">
-            {wanderlistData.city?.city}, {wanderlistData.city?.state}, {wanderlistData.city?.country}
-          </Typography>
-        </Box>
-        
-        <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
-          <Box display="flex" alignItems="center">
-            <CalendarMonth fontSize="small" sx={{ mr: 0.5 }} />
-            <Typography variant="body2">Travel Date: {new Date(wanderlistData.travelDate).toLocaleDateString()}</Typography>
-          </Box>
-          <Box display="flex" alignItems="center">
-            <AccessTime fontSize="small" sx={{ mr: 0.5 }} />
-            <Typography variant="body2">{wanderlistData.numberOfDays} Days</Typography>
-          </Box>
-          <Box display="flex" alignItems="center">
-            <Person fontSize="small" sx={{ mr: 0.5 }} />
-            <Typography variant="body2">{wanderlistData.likes?.length || 0} Likes</Typography>
-          </Box>
-        </Box>
-      </Paper>
-
       <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4 }}>
         {/* Left side - Wanderlist details */}
         <Box sx={{ flex: "1 1 auto", maxWidth: { xs: "100%", md: "calc(66.666% - 16px)" } }}>
+          {/* Full-width overview section */}
+          <Box mb={4}>
+            <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                <Typography variant="h4" component="h1">
+                  {wanderlistData.name}
+                </Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" gap={1} mb={2}>
+                <LocationOn color="primary" />
+                <Typography variant="subtitle1">
+                  {wanderlistData.city?.city}, {wanderlistData.city?.state}, {wanderlistData.city?.country}
+                </Typography>
+              </Box>
+
+              <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+                <Box display="flex" alignItems="center">
+                  <CalendarMonth fontSize="small" sx={{ mr: 0.5 }} />
+                  <Typography variant="body2">Travel Date: {new Date(wanderlistData.travelDate).toLocaleDateString()}</Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <AccessTime fontSize="small" sx={{ mr: 0.5 }} />
+                  <Typography variant="body2">{wanderlistData.numberOfDays} Days</Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <Person fontSize="small" sx={{ mr: 0.5 }} />
+                  <Typography variant="body2">{wanderlistData.likes?.length || 0} Likes</Typography>
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
           {/* City Description with Read More/Less */}
           <Box mb={4}>
             <Paper sx={{ p: 4, borderRadius: 2 }}>
@@ -216,7 +212,6 @@ export default async function WanderlistDetailPage({ params }: Props) {
 async function getWanderlistData(id: string): Promise<IWanderlistItem | null> {
   try {
     const response = await getWanderlistByIdService(id);
-    console.log("Wanderlist API response:", response);
     return response;
   } catch (error) {
     console.error("Error fetching wanderlist data:", error);

@@ -1,4 +1,5 @@
-import { IWanderlistItem } from '@/interfaces/IWanderlist';
+import { IWanderlistItem } from "@/interfaces/IWanderlist";
+import { JSX } from "react";
 
 interface WanderlistDetailClientProps {
   wanderlistData: IWanderlistItem;

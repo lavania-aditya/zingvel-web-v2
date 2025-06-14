@@ -40,15 +40,10 @@ export default async function PackageDetailPage({ params }: Props) {
               height: 500,
               overflow: "hidden",
               borderRadius: 2,
-              width: "100%"
+              width: "100%",
             }}
           >
-            <Image 
-              src={packageData.media[0].url} 
-              alt={`${packageData.name} - main image`} 
-              fill 
-              style={{ objectFit: "cover" }} 
-            />
+            <Image src={packageData.media[0].url} alt={`${packageData.name} - main image`} fill style={{ objectFit: "cover" }} />
           </Paper>
         ) : (
           <Paper
@@ -58,7 +53,7 @@ export default async function PackageDetailPage({ params }: Props) {
               alignItems: "center",
               justifyContent: "center",
               bgcolor: "grey.200",
-              width: "100%"
+              width: "100%",
             }}
           >
             <Typography variant="h6" color="text.secondary">
@@ -93,18 +88,20 @@ export default async function PackageDetailPage({ params }: Props) {
             </Typography>
           </Box>
         </Box>
-        
+
         <Box display="flex" alignItems="center" gap={1} mb={2}>
           <LocationOn color="primary" />
           <Typography variant="subtitle1">
             {packageData.location.city}, {packageData.location.state}, {packageData.location.country}
           </Typography>
         </Box>
-        
+
         <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
           <Box display="flex" alignItems="center">
             <Rating value={packageData.rating} readOnly precision={0.5} />
-            <Typography variant="body2" ml={1}>({packageData.rating})</Typography>
+            <Typography variant="body2" ml={1}>
+              ({packageData.rating})
+            </Typography>
           </Box>
           <Box display="flex" alignItems="center">
             <CalendarMonth fontSize="small" sx={{ mr: 0.5 }} />
@@ -291,7 +288,6 @@ async function getPackageData(id: string): Promise<IPackageItem | null> {
   try {
     // The API returns the package data directly, not nested under a data property
     const response = await getPackageById(id);
-    console.log("Package API response:", response);
     return response; // Return the direct response
   } catch (error) {
     console.error("Error fetching package data:", error);

@@ -3,33 +3,10 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { sendOtpService, verifyOtpSerive, getUserFromTokenApi } from "@/services/SUser";
 import Cookies from "js-cookie";
-
-interface User {
-  id: string;
-  userName: string;
-  firstName: string;
-  lastName: string;
-  countryCode: number;
-  phNumber: string;
-  phVerified: boolean;
-  whatsappNumber?: string;
-  avatarImage?: string;
-  email: string | null;
-  emailVerified: boolean;
-  bio: string | null;
-  gender: string;
-  typeOfTravel: string[] | null;
-  placesTravelledYear: string[] | null;
-  dateOfBirth: string | null;
-  totalWanderlist?: number;
-  totalPost?: number;
-  totalTravel?: number;
-  created_at?: string;
-  updated_at?: string;
-}
+import { IUser } from "@/interfaces/IUser";
 
 interface AuthContextType {
-  user: User | null;
+  user: IUser | null;
   isAuthenticated: boolean;
   login: (phoneNumber: string) => Promise<boolean>;
   logout: () => void;
@@ -47,7 +24,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
 
   // Check if user is already logged in from auth token
   useEffect(() => {
