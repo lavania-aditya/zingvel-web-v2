@@ -1,17 +1,17 @@
 "use client";
 
 import { Box, Container, Typography, Paper, useTheme } from "@mui/material";
-import { Apple as IosIcon, Google as GoogleIcon } from "@mui/icons-material";
+import Image from "next/image";
 
 export default function DownloadAppBanner() {
   const theme = useTheme();
 
   const handleGooglePlayClick = () => {
-    // window.open("", "_blank", "noopener, noreferrer");
+    window.open("https://play.google.com/store/apps/details?id=com.zingvel.app", "_blank", "noopener, noreferrer");
   };
 
   const handleAppStoreClick = () => {
-    // window.open("", "_blank", "noopener, noreferrer");
+    window.open("https://apps.apple.com/app/zingvel", "_blank", "noopener, noreferrer");
   };
 
   return (
@@ -20,7 +20,9 @@ export default function DownloadAppBanner() {
         sx={{
           borderRadius: 3,
           overflow: "hidden",
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.background.default,
+          border: "2px dashed",
+          borderColor: "primary.main",
           p: { xs: 3, md: 4 },
         }}
       >
@@ -33,11 +35,11 @@ export default function DownloadAppBanner() {
             mb: 3,
           }}
         >
-          <Typography variant="h5" component="h2" color={theme.palette.common.white} fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography variant="h5" component="h2" color="text.primary" fontWeight="bold" sx={{ mb: 1 }}>
             Download the Zingvel App
           </Typography>
 
-          <Typography variant="body1" color={theme.palette.common.white} sx={{ mb: 2, maxWidth: "600px" }}>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2, maxWidth: "600px" }}>
             Get the best travel experience with our mobile app. Book trips, manage itineraries, and discover new destinations on the go.
           </Typography>
         </Box>
@@ -67,7 +69,7 @@ export default function DownloadAppBanner() {
             }}
           >
             <Box sx={{ mr: 2, display: "flex", alignItems: "center" }}>
-              <GoogleIcon sx={{ color: theme.palette.secondary.main, fontSize: 40 }} />
+              <Image src="/icons/play_store_icon.svg" alt="Play Store" width={40} height={40} />
             </Box>
             <Box sx={{ textAlign: "left" }}>
               <Typography variant="body1" color={theme.palette.secondary.main} sx={{ display: "block", fontSize: "0.8rem" }}>
@@ -96,7 +98,7 @@ export default function DownloadAppBanner() {
             }}
           >
             <Box sx={{ mr: 2, display: "flex", alignItems: "center" }}>
-              <IosIcon sx={{ color: theme.palette.secondary.main, fontSize: 40 }} />
+              <Image src="/icons/apple_icon.svg" alt="App Store" width={40} height={40} />
             </Box>
             <Box sx={{ textAlign: "left" }}>
               <Typography variant="caption" color={theme.palette.secondary.main} sx={{ display: "block", fontSize: "0.7rem" }}>

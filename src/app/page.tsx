@@ -11,6 +11,7 @@ import { getTrendingWanderlistsService } from "@/services/SWanderlist";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import PartnerBannerWrapper from "@/components/PartnerBannerWrapper";
 import DownloadAppBanner from "@/components/DownloadAppBanner";
+import CreateWanderlistBanner from "@/components/CreateWanderlistBanner";
 
 export const metadata: Metadata = {
   title: "Zingvel | Discover Authentic Travel Experiences",
@@ -57,6 +58,9 @@ export default async function Home() {
           </Grid>
         </Container>
 
+        {/* Create Wanderlist Banner */}
+        <CreateWanderlistBanner />
+
         {/* Partner Banner */}
         <PartnerBannerWrapper />
 
@@ -93,7 +97,7 @@ export default async function Home() {
         <DownloadAppBanner />
 
         {/* Get in Touch Section */}
-        <Container sx={{ my: 6, py: 4 }}>
+        <Container sx={{ mt: 6, py: 4 }}>
           <Card sx={{ borderRadius: 3, overflow: "hidden", boxShadow: 3 }}>
             <Box sx={{ p: { xs: 3, md: 5 } }}>
               <GetInTouchForm showTitle={true} showInquiryOptions={true} variant="full" />

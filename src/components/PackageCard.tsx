@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardMedia, CardContent, Typography, Box, useTheme, Button, Divider } from "@mui/material";
-import { Check as CheckIcon, Star as StarIcon } from "@mui/icons-material";
+import { Check as CheckIcon, Star as StarIcon, Share as ShareIcon } from "@mui/icons-material";
 import MediaFallback from "./MediaFallback";
 import Link from "next/link";
 import { IPackageItem } from "@/interfaces/IPacakges";
@@ -49,10 +49,18 @@ const PackageCard = ({ packageData }: IProps) => {
     }
   };
 
+  const handleShareClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(`${window.location.origin}/package/${packageData._id}`);
+      showToast("Link copied to clipboard", "success");
+    }
+  };
+
   // Handle login dialog close
   const handleLoginDialogClose = () => {
     setLoginDialogOpen(false);
-    
+
     // Check if user is now authenticated after closing the dialog
     if (isAuthenticated) {
       showToast("Thank you for your interest!", "success");
@@ -85,7 +93,7 @@ const PackageCard = ({ packageData }: IProps) => {
             flexGrow: 1,
           }}
         >
-          <Box sx={{ position: "relative" }}>
+          <Box sx={{ position: "relative", height: 200 }}>
             {imageUrl ? (
               <CardMedia
                 component="div"
@@ -100,91 +108,59 @@ const PackageCard = ({ packageData }: IProps) => {
               <MediaFallback height={200} />
             )}
 
-            {/* Rating badge */}
-
+            {/* Share button */}
             <Box
+              onClick={handleShareClick}
               sx={{
                 display: "flex",
                 alignItems: "center",
-                // backgroundColor: "primary.main",
-                color: "white",
-                px: 0.8,
-                py: 0.2,
-                borderRadius: 5,
-                mr: 1,
+                p: 1,
+                borderRadius: 2,
                 position: "absolute",
-                top: 12,
-                left: 12,
+                top: 10,
+                right: 10,
                 fontWeight: "bold",
                 backgroundColor: theme.palette.common.white,
-                opacity: 0.8,
+                opacity: 0.9,
                 borderColor: theme.palette.primary.main,
                 borderWidth: 1,
-                borderStyle: "solid",
-                // color: theme.palette.grey[900],
-                // backgroundColor: theme.palette.mode === "dark" ? "primary.main" : "#8c52ff",
-                // color: "white",
-                // borderRadius: "16px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "bold", color: theme.palette.primary.main, mr: 0.5 }}>
-                {packageData?.rating || 4.9}
-              </Typography>
-              <StarIcon sx={{ fontSize: "0.9rem", color: theme.palette.primary.main }} />
+              <ShareIcon fontSize="medium" sx={{ color: theme.palette.primary.main }} />
             </Box>
-            {/* )} */}
 
-            {/* Duration badge */}
-            {/* Pricing badge */}
-
-            {/* <Box
+            {/* Discount badge removed as requested */}
+            
+            {/* Overlay at the bottom of the image with days and rating */}
+            <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                // backgroundColor: "primary.main",
-                color: "white",
-                px: 1,
-                py: 1,
-                // borderRadius: 5,
-                // mr: 1,
                 position: "absolute",
                 bottom: 0,
-                right: 0,
                 left: 0,
-                fontWeight: "bold",
-                backgroundColor: theme.palette.grey[900],
-                opacity: 0.6,
-                // borderTopLeftRadius: 5,
-                // borderTopRightRadius: 5,
-                // backgroundColor: "linear-gradient(to right,rgb(35, 34, 31), #f44336)",
-                // backgroundColor: theme.palette.mode === "dark" ? "primary.main" : "#8c52ff",
-                // color: "white",
-                // borderRadius: "16px",
+                right: 0,
+                background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0) 100%)",
+                color: "white",
+                p: 1.5,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
-            > */}
-            {/* <Box sx={{ bgcolor: "#f9f9f9", py: 1.2, px: 2, borderTop: "1px solid", borderColor: "divider" }}> */}
-            {/* <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexGrow: 1 }}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography variant="h4" color={theme.palette.common.white} sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                    {`₹ ${packageData?.salePrice?.toLocaleString() || "N/A"}`}
-                  </Typography>
-                  <Typography variant="subtitle2" color={theme.palette.common.white} sx={{ ml: 0.5 }}>
-                    / person
-                  </Typography>
-                </Box>
-
-                {hasDiscount && (
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography variant="subtitle2" color={theme.palette.common.white} sx={{ textDecoration: "line-through" }}>
-                      ₹{packageData?.regularPrice?.toLocaleString() || "N/A"}
-                    </Typography>
-                    <Typography variant="subtitle1" color={theme.palette.primary.main} sx={{ fontWeight: "bold", ml: 0.5 }}>
-                      {discountPercentage}% OFF
-                    </Typography>
-                  </Box>
-                )}
-              </Box> */}
-            {/* </Box> */}
+            >
+              {/* Days/Nights */}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="body2" sx={{ fontWeight: "bold", color: "white" }}>
+                  {packageData.duration?.days || "N/A"}D / {packageData.duration?.nights || "N/A"}N
+                </Typography>
+              </Box>
+              
+              {/* Rating */}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <StarIcon sx={{ color: "#FFD700", fontSize: "1rem", mr: 0.5 }} />
+                <Typography variant="body2" sx={{ fontWeight: "bold", color: "white" }}>
+                  {packageData.rating || "4.5"}
+                </Typography>
+              </Box>
+            </Box>
           </Box>
 
           <CardContent sx={{ flexGrow: 1, p: 2, pb: 1 }}>
@@ -202,24 +178,6 @@ const PackageCard = ({ packageData }: IProps) => {
                 }}
               >
                 {packageData.name}
-              </Typography>
-              <Typography
-                variant="subtitle2"
-                // component="h3"
-                sx={{
-                  // fontWeight: "bold",
-                  // fontSize: "1rem",
-                  // mb: 0.5,
-                  fontFamily: FONTS.heading,
-                  // lineHeight: 1.2,
-                  backgroundColor: theme.palette.primary.light,
-                  color: theme.palette.grey[900],
-                  px: 1,
-                  py: 0.5,
-                  borderRadius: 5,
-                }}
-              >
-                {packageData.duration?.days || "N/A"}D / {packageData.duration?.nights || "N/A"}N
               </Typography>
             </Box>
 
@@ -352,7 +310,7 @@ const PackageCard = ({ packageData }: IProps) => {
             onClick={handleInterestClick}
             // disabled={isInterested}
             sx={{
-              color: "primary.main",
+              color: theme.palette.primary.main,
               fontWeight: "bold",
               fontFamily: FONTS.heading,
             }}

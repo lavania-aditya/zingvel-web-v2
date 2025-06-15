@@ -33,9 +33,10 @@ export default function PartnerBanner() {
         sx={{
           borderRadius: 3,
           overflow: "hidden",
-          background: theme.palette.secondary.main,
+          background: theme.palette.background.default,
           position: "relative",
-          boxShadow: "0 8px 24px rgba(46, 125, 50, 0.2)",
+          border: "2px dashed",
+          borderColor: "primary.main",
         }}
       >
         <Box
@@ -63,49 +64,40 @@ export default function PartnerBanner() {
           }}
         >
           <Box sx={{ mb: { xs: 3, md: 0 }, maxWidth: { md: "60%" } }}>
-            <Typography variant="h4" component="h2" fontWeight="bold" color={theme.palette.common.white} sx={{ mb: 1 }}>
+            <Typography variant="h4" component="h2" fontWeight="bold" color="text.primary" sx={{ mb: 1 }}>
               Become a Zingvel Partner
             </Typography>
 
-            <Typography variant="body1" color={theme.palette.common.white} sx={{ mb: 3, opacity: 0.9 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
               Join our network of travel partners and grow your business. Get access to thousands of travelers looking for unique experiences.
             </Typography>
 
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, mb: 3 }}>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <TrendingUp sx={{ color: theme.palette.common.white, mr: 1 }} />
-                <Typography color={theme.palette.common.white}>Increase Revenue</Typography>
+                <TrendingUp sx={{ color: "primary.main", mr: 1 }} />
+                <Typography color="text.primary">Increase Revenue</Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Verified sx={{ color: theme.palette.common.white, mr: 1 }} />
-                <Typography color={theme.palette.common.white}>Verified Customers</Typography>
+                <Verified sx={{ color: "primary.main", mr: 1 }} />
+                <Typography color="text.primary">Verified Customers</Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <HandshakeOutlined sx={{ color: theme.palette.common.white, mr: 1 }} />
-                <Typography color={theme.palette.common.white}>Easy Onboarding</Typography>
+                <HandshakeOutlined sx={{ color: "primary.main", mr: 1 }} />
+                <Typography color="text.primary">Easy Onboarding</Typography>
               </Box>
             </Box>
 
             <Button
               variant="outlined"
-              color="secondary"
+              color="primary"
               size="large"
               onClick={handleJoinClick}
-              // endIcon={<ArrowForward sx={{ color: theme.palette.common.white }} />}
               sx={{
-                // fontWeight: "bold",
-                // backgroundColor: "white",
-                // color: theme.palette.common.white,
-                border: `1px solid ${theme.palette.common.white}`,
-                "&:hover": {
-                  // border: `1px solid ${theme.palette.success.main}`,
-                  // backgroundColor: theme.palette.success.main,
-                  // color: theme.palette.common.white,
-                  // backgroundColor: "rgba(255, 255, 255, 0.9)",
-                },
+                fontWeight: "bold",
+                borderRadius: 2,
               }}
             >
-              <Typography sx={{ color: theme.palette.common.white, letterSpacing: 1.2 }}>JOIN AS PARTNER</Typography>
+              JOIN AS PARTNER
             </Button>
           </Box>
 
@@ -116,7 +108,7 @@ export default function PartnerBanner() {
               justifyContent: "center",
             }}
           >
-            <HandshakeOutlined sx={{ fontSize: 120, color: theme.palette.common.white, opacity: 0.8 }} />
+            <HandshakeOutlined sx={{ fontSize: 120, color: "primary.main", opacity: 0.8 }} />
           </Box>
         </Box>
       </Paper>

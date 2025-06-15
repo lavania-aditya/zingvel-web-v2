@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, useTheme, Typography } from "@mui/material";
-import { ChevronRight as ChevronRightIcon, Whatshot as TrendingIcon, TravelExplore as ExploreIcon } from "@mui/icons-material";
+import { Box, useTheme, Typography, Button } from "@mui/material";
+import { ChevronRight as ChevronRightIcon, Whatshot as TrendingIcon, TravelExplore as ExploreIcon, Add as AddIcon } from "@mui/icons-material";
 import Image from "next/image";
 import { ICategoryItem } from "@/interfaces/IPacakges";
 import { useRouter } from "next/navigation";
@@ -158,6 +158,23 @@ const CategoryBar = (props: IProps) => {
           })}
 
           {categoryItem(null, -2, false, true)}
+          
+          {/* Create Wanderlist Button */}
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => router.push('/create-wanderlist')}
+            sx={{
+              ml: 2,
+              borderRadius: 2,
+              whiteSpace: 'nowrap',
+              height: 40,
+              fontWeight: 'bold',
+            }}
+          >
+            Create Wanderlist
+          </Button>
         </Box>
       </Box>
     </Box>

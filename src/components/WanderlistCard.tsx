@@ -1,7 +1,27 @@
 "use client";
 
-import { Card, CardMedia, CardContent, Typography, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
-import { LocationOn as LocationIcon, AccessTime as TimeIcon, Share as ShareIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon, Add as AddIcon } from "@mui/icons-material";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Divider,
+} from "@mui/material";
+import {
+  LocationOn as LocationIcon,
+  AccessTime as TimeIcon,
+  Share as ShareIcon,
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+} from "@mui/icons-material";
 import MediaFallback from "./MediaFallback";
 import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import React, { useState, useEffect } from "react";
@@ -11,6 +31,7 @@ import { likeWanderListService, checkedWanderlistLiked } from "@/services/SWande
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import LoginDialog from "./LoginDialog";
+// import theme from "@/utils/theme";
 
 interface IProps {
   wanderlistData: IWanderlistItem;
@@ -26,7 +47,7 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
   const [loginDialogOpen, setLoginDialogOpen] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>("");
   const [pendingAction, setPendingAction] = useState<"like" | "add" | null>(null);
-  
+
   // Check if the current user is the creator of the wanderlist
   const isOwner = user?.id === wanderlistData.userId;
 
@@ -52,7 +73,7 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
         } else if (pendingAction === "add") {
           // Console log the user ID and wanderlist ID after login as requested
           console.log("User ID after login:", user?.id, "Wanderlist ID:", wanderlistData.id);
-          
+
           if (onAddToWanderlist) {
             onAddToWanderlist(wanderlistData.id);
             showToast("Added to your wanderlists", "success");
@@ -67,10 +88,10 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
 
   useEffect(() => {
     // Set the share URL when the component mounts
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setShareUrl(`${window.location.origin}/wanderlist/${wanderlistData.id}`);
     }
-    
+
     // Check if the user has liked this wanderlist
     const checkLikeStatus = async () => {
       if (isAuthenticated && wanderlistData.id) {
@@ -82,7 +103,7 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
         }
       }
     };
-    
+
     checkLikeStatus();
   }, [isAuthenticated, wanderlistData.id]);
 
@@ -95,18 +116,18 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
   const handleLikeClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isAuthenticated) {
       setPendingAction("like");
       setLoginDialogOpen(true);
       return;
     }
-    
+
     try {
       if (wanderlistData.id) {
         await likeWanderListService(wanderlistData.id);
         setIsLiked(!isLiked);
-        setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
+        setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
         showToast(isLiked ? "Removed from favorites" : "Added to favorites", "success");
       }
     } catch (error) {
@@ -118,17 +139,17 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
   const handleAddToWanderlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isAuthenticated) {
       setPendingAction("add");
       setLoginDialogOpen(true);
       return;
     }
-    
-    if (wanderlistData.id) {
+
+    if (wanderlistData.id && !isOwner) {
       // Console log the user ID and wanderlist ID as requested
       console.log("User ID:", user?.id, "Wanderlist ID:", wanderlistData.id);
-      
+
       if (onAddToWanderlist) {
         onAddToWanderlist(wanderlistData.id);
         showToast("Added to your wanderlists", "success");
@@ -159,38 +180,45 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
           ) : (
             <MediaFallback height={200} />
           )}
-          
-          {/* Top Right - Share Icon */}
+
+          {/* Gradient overlay removed from top */}
+
+          {/* Share button */}
           <IconButton
             onClick={handleShareClick}
             sx={{
               position: "absolute",
-              top: 5,
-              right: 5,
-              bgcolor: "rgba(255,255,255,0.8)",
-              "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
+              top: 8,
+              right: 8,
+              bgcolor: "rgba(255, 255, 255, 0.8)",
+              "&:hover": {
+                bgcolor: "rgba(255, 255, 255, 0.9)",
+              },
             }}
             size="small"
             aria-label="share"
           >
             <ShareIcon fontSize="small" />
           </IconButton>
-          
-          {/* Bottom - City, State */}
+
+          {/* Bottom - Wanderlist Name, City, State */}
           <Box
             sx={{
               position: "absolute",
               bottom: 0,
               left: 0,
               right: 0,
-              background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
+              background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%)",
               p: 2,
               pt: 3,
             }}
           >
-            <Typography variant="h6" component="h3" sx={{ color: "white", fontWeight: "bold" }}>
+            {/* Wanderlist name */}
+            <Typography variant="h6" sx={{ color: "white", fontWeight: "bold", textShadow: "0px 1px 2px rgba(0,0,0,0.5)", mb: 0.5 }}>
               {wanderlistData.name}
             </Typography>
+            
+            {/* Location info */}
             <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
               <LocationIcon sx={{ color: "white", fontSize: "0.875rem", mr: 0.5, opacity: 0.9 }} />
               <Typography variant="body2" sx={{ color: "white", opacity: 0.9 }}>
@@ -214,14 +242,14 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
               {wanderlistData.numberOfDays} days
             </Typography>
           </Box>
-          
+
           {/* Created by username */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography variant="body2" color="text.secondary">
-              Created by: {wanderlistData.userName || "Anonymous"}
+              Created by: {wanderlistData?.user?.firstName || "Anonymous"}
             </Typography>
           </Box>
-          
+
           {/* Count of things */}
           <Box sx={{ display: "flex", gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
@@ -236,41 +264,58 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
               </Typography>
             )}
           </Box>
-          
+
           {/* Like and Add to Wanderlist buttons */}
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton 
-                onClick={handleLikeClick} 
+          <Divider sx={{ my: 1 }} />
+          <Box sx={{ display: "flex", gap: 1, justifyContent: "space-between" }}>
+            {/* Like Button */}
+            <Button
+              variant="outlined"
+              sx={{
+                minWidth: "auto",
+                borderRadius: 2,
+                border: "1px solid #e0e0e0",
+                // p: 0,
+                "&:hover": {
+                  border: "1px solid #e0e0e0",
+                  bgcolor: "rgba(0, 0, 0, 0.04)",
+                },
+              }}
+            >
+              <IconButton
+                onClick={handleLikeClick}
                 size="small"
                 aria-label={isLiked ? "unlike" : "like"}
+                sx={{
+                  "&:hover": { backgroundColor: "transparent" },
+                }}
               >
-                {isLiked ? 
-                  <FavoriteIcon fontSize="small" color="error" /> : 
-                  <FavoriteBorderIcon fontSize="small" />}
+                {isLiked ? <FavoriteIcon fontSize="small" color="error" /> : <FavoriteBorderIcon fontSize="small" />}
               </IconButton>
               <Typography variant="body2" color="text.secondary">
                 {likeCount}
               </Typography>
-            </Box>
-            
-            {/* Add to Wanderlist button - only show if not the owner */}
-            {!isOwner && (
-              <Button 
-                variant="outlined" 
-                color="primary" 
-                size="small"
-                onClick={handleAddToWanderlist}
-                startIcon={<AddIcon />}
-                sx={{ color: "primary.main" }}
-              >
-                Add to Wanderlist
-              </Button>
-            )}
+            </Button>
+
+            <Button
+              fullWidth
+              variant="outlined"
+              color="primary"
+              onClick={(e) => {
+                if (!isOwner) {
+                  handleAddToWanderlist(e);
+                }
+              }}
+              sx={{
+                borderRadius: 2,
+              }}
+            >
+              {isOwner ? "You own this Wanderlist" : "Add to Wanderlist"}
+            </Button>
           </Box>
         </CardContent>
       </Card>
-      
+
       {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onClose={() => setShareDialogOpen(false)}>
         <DialogTitle>Share Wanderlist</DialogTitle>
@@ -292,7 +337,7 @@ const WanderlistCard = ({ wanderlistData, onAddToWanderlist }: IProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Login Dialog */}
       <LoginDialog open={loginDialogOpen} onClose={handleLoginDialogClose} />
     </>

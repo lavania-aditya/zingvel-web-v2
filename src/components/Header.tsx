@@ -38,7 +38,7 @@ const Header = () => {
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const { mode, toggleTheme } = useThemeContext();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const isDarkMode = mode === "dark";
 
   const handleDownloadClick = () => {
@@ -151,7 +151,7 @@ const Header = () => {
               src="/zingvel_logo.png"
               alt="Zingvel Logo"
               sx={{
-                height: isMobileOrTablet ? 30 : 40,
+                height: isMobileOrTablet ? 35 : 40,
                 maxWidth: "100%",
                 objectFit: "contain",
               }}
@@ -268,6 +268,7 @@ const Header = () => {
                   bgcolor: "primary.main",
                 }}
                 onClick={() => (isAuthenticated ? router.push("/profile") : setLoginDialogOpen(true))}
+                src={user?.avatarImage}
               >
                 <PersonIcon fontSize="small" />
               </Avatar>

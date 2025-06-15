@@ -11,3 +11,7 @@ export const getAllPackages = async (page: number = 1, limit: number = 10, name:
 export const getPackageById = async (id: string) => {
   return ApiHelper.packages.get(`/v1/travel-packages/${id}`);
 };
+
+export const getAllUserLeads = async (userId: string, page: number = 1, count: number = 10) => {
+  return ApiHelper.packages.get(`/v1/leads/user/${userId}?page=${page}&count=${count}`);
+};

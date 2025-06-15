@@ -21,94 +21,125 @@ const breakpoints = {
 // Define custom colors based on user specifications
 const colors = {
   // Main colors
-  primary: "#FCA21A",
-  primary500: "#fca21a99",
-  grey: "#DDE2E5",
-  green: "#2E7D32",
-  red: "#D32F2F",
-
-  // Background colors
-  defaultBackground: "#ffffff",
-  errorBackground: "#FCF3F2",
-  greenBackground: "#F0F9F6",
-  focusBackground: "#E9ECF8",
-  inputDisabled: "#F2F4F5",
-
-  // Black shades (increasing darkness)
-  black: {
-    100: "#CFD3D4", // Lightest
-    200: "#ABAFB1",
+  common: {
+    white: "#ffffff",
+    black: "#000000",
+    defaultBackground: "#ffffff",
+    inputDisabled: "#F2F4F5",
+  },
+  grey: {
+    50: "#F8F9FA",
+    100: "#E8EBED",
+    200: "#B6BDC2",
     300: "#83898C",
     400: "#5E6366",
-    500: "#2B2F32", // Darkest
+    500: "#2B2F32",
+    600: "#212529",
+    700: "#1A1E21",
+    800: "#151819",
+    900: "#0D0F10",
+    A100: "#F2F4F5",
+    A200: "#E8EBED",
+    A400: "#B6BDC2",
+    A700: "#616161",
   },
-  white: "#ffffff",
+  primary: {
+    main: "#FCA21A",
+    light: "#fca21a99",
+    dark: "#E69200",
+  },
+  secondary: {
+    main: "#333333",
+    light: "#595959",
+    dark: "#1A1A1A",
+  },
+  success: {
+    main: "#2E7D32",
+    light: "#2E7D3299",
+    dark: "#2E7D32",
+  },
+  error: {
+    main: "#D32F2F",
+    light: "#D32F2F99",
+    dark: "#D32F2F",
+  },
+  warning: {
+    main: "#FCA21A",
+    light: "#FCA21A99",
+    dark: "#FCA21A",
+  },
+  info: {
+    main: "#2196F3",
+    light: "#2196F399",
+    dark: "#2196F3",
+  },
 };
 
 // Define palette options for light and dark modes
 const getPalette = (mode: PaletteMode): PaletteOptions => ({
   mode,
+  common: colors.common,
   primary: {
-    main: "#FCA21A",
-    light: "#fca21a99", // Lighter shade of primary
-    dark: "#E69200", // Darker shade of primary
-    contrastText: "#000000",
+    main: colors.primary.main,
+    light: colors.primary.light, // Lighter shade of primary
+    dark: colors.primary.dark, // Darker shade of primary
+    contrastText: colors.common.white,
   },
   secondary: {
-    // main: "#DDE2E5", // new color code,
-    // light: "#E8EBED", // Lighter shade of grey
-    // dark: "#B6BDC2", // Darker shade of grey
-    // contrastText: "#000000",
-    main: "#333333",
-    light: "#595959",
-    dark: "#1A1A1A",
-    contrastText: "#FFFFFF",
+    main: colors.secondary.main,
+    light: colors.secondary.light,
+    dark: colors.secondary.dark,
+    contrastText: colors.common.white,
   },
   background: {
-    default: mode === "light" ? colors.defaultBackground : "#121212",
-    paper: mode === "light" ? "#ffffff" : "#1e1e1e",
+    default: mode === "light" ? colors.common.defaultBackground : "#121212",
+    paper: mode === "light" ? colors.common.defaultBackground : colors.common.defaultBackground,
   },
   text: {
-    primary: mode === "light" ? colors.black[500] : "#ffffff",
-    secondary: mode === "light" ? colors.black[400] : "#b0b0b0",
-  },
-  error: {
-    main: colors.red,
-    light: "#EF5350",
-    dark: "#C62828",
-    contrastText: "#ffffff",
-  },
-  warning: {
-    main: colors.primary, // Using primary color as warning
-    contrastText: "#000000",
-  },
-  info: {
-    main: "#2196F3", // Standard blue for info
-    contrastText: "#ffffff",
+    primary: mode === "light" ? colors.common.black : colors.common.white,
+    secondary: mode === "light" ? colors.common.black : colors.common.white,
   },
   success: {
-    main: "#2E7F49",
-    light: "#4caf50cc",
-    dark: "#1B5E20",
-    contrastText: "#ffffff",
+    main: colors.success.main,
+    light: colors.success.light,
+    dark: colors.success.dark,
+    contrastText: colors.common.white,
+  },
+  error: {
+    main: colors.error.main,
+    light: colors.error.light,
+    dark: colors.error.dark,
+    contrastText: colors.common.white,
+  },
+  warning: {
+    main: colors.warning.main,
+    light: colors.warning.light,
+    dark: colors.warning.dark,
+    contrastText: colors.common.white,
+  },
+  info: {
+    main: colors.info.main,
+    light: colors.info.light,
+    dark: colors.info.dark,
+    contrastText: colors.common.white,
   },
   grey: {
-    50: "#F8F9FA",
-    100: colors.black[100],
-    200: colors.black[200],
-    300: colors.black[300],
-    400: colors.black[400],
-    500: colors.black[500],
-    600: "#212529",
-    700: "#1A1E21",
-    800: "#151819",
-    900: "#0D0F10",
-    A100: colors.inputDisabled,
-    A200: colors.grey,
-    A400: colors.focusBackground,
-    A700: "#616161",
+    50: colors.grey[50],
+    100: colors.grey[100],
+    200: colors.grey[200],
+    300: colors.grey[300],
+    400: colors.grey[400],
+    500: colors.grey[500],
+    600: colors.grey[600],
+    700: colors.grey[700],
+    800: colors.grey[800],
+    900: colors.grey[900],
+    A100: colors.grey["A100"],
+    A200: colors.grey["A200"],
+    A400: colors.grey["A400"],
+    A700: colors.grey["A700"],
   },
-  divider: mode === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)",
+  divider: mode === "light" ? colors.grey["A100"] : colors.grey["A700"],
 });
 
 // Create theme creator function to handle both light and dark modes
@@ -205,36 +236,38 @@ const createAppTheme = (mode: PaletteMode): Theme => {
       MuiButton: {
         styleOverrides: {
           root: {
-            color: `${colors.white} !important`,
+            color: `${colors.common.white} !important`,
             borderRadius: "0.625rem",
             padding: "8px 16px",
             "&:disabled": {
-              backgroundColor: `${colors.primary500} !important`,
+              backgroundColor: colors.common.inputDisabled,
+              pointerEvents: "none !important",
             },
             "&.MuiButton-outlined": {
-              color: `${colors.black[500]} !important`,
+              color: `${colors.common.black} !important`,
             },
           },
           contained: {
             boxShadow: "none",
             "&:hover": {
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+              boxShadow: `1px solid ${colors.grey["A100"]}`,
             },
           },
           containedPrimary: {
-            backgroundColor: colors.primary,
-            color: "#000000",
+            backgroundColor: colors.primary.main,
+            color: colors.common.black,
           },
           containedSuccess: {
-            backgroundColor: colors.green,
+            backgroundColor: colors.success.main,
           },
           containedError: {
-            backgroundColor: colors.red,
+            backgroundColor: colors.error.main,
           },
 
           outlinedPrimary: {
             // root: {
-            color: `${colors.black} !important`,
+            color: `${colors.secondary.main} !important`,
+            // backgroundColor: "red",
             // },
           },
         },
@@ -243,7 +276,7 @@ const createAppTheme = (mode: PaletteMode): Theme => {
         styleOverrides: {
           root: {
             "& .Mui-disabled": {
-              backgroundColor: colors.inputDisabled,
+              backgroundColor: colors.common.inputDisabled,
             },
             "& .Mui-focused": {
               // backgroundColor: colors.focusBackground,
@@ -257,10 +290,10 @@ const createAppTheme = (mode: PaletteMode): Theme => {
       MuiAlert: {
         styleOverrides: {
           standardError: {
-            backgroundColor: colors.errorBackground,
+            backgroundColor: colors.error.main,
           },
           standardSuccess: {
-            backgroundColor: colors.greenBackground,
+            backgroundColor: colors.success.main,
           },
         },
       },
@@ -274,15 +307,15 @@ const createAppTheme = (mode: PaletteMode): Theme => {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            boxShadow: mode === "light" ? "0px 1px 3px rgba(0, 0, 0, 0.1)" : "0px 1px 3px rgba(0, 0, 0, 0.3)",
+            boxShadow: mode === "light" ? `1px solid ${colors.grey["A100"]}` : `1px solid ${colors.grey["A700"]}`,
           },
         },
       },
       MuiBottomNavigation: {
         styleOverrides: {
           root: {
-            backgroundColor: mode === "light" ? "#ffffff" : "#1e1e1e",
-            borderTop: `1px solid ${mode === "light" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)"}`,
+            backgroundColor: mode === "light" ? colors.common.defaultBackground : colors.common.defaultBackground,
+            borderTop: `1px solid ${mode === "light" ? colors.grey["A100"] : colors.grey["A700"]}`,
           },
         },
       },
@@ -291,7 +324,7 @@ const createAppTheme = (mode: PaletteMode): Theme => {
           root: {
             color: mode === "light" ? "#666666" : "#b0b0b0",
             "&.Mui-selected": {
-              color: colors.primary,
+              color: colors.primary.main,
             },
           },
         },
@@ -299,7 +332,7 @@ const createAppTheme = (mode: PaletteMode): Theme => {
       MuiCard: {
         styleOverrides: {
           root: {
-            boxShadow: mode === "light" ? "0px 2px 8px rgba(0, 0, 0, 0.1)" : "0px 2px 8px rgba(0, 0, 0, 0.3)",
+            boxShadow: mode === "light" ? `1px solid ${colors.grey["A100"]}` : `1px solid ${colors.grey["A700"]}`,
             borderRadius: "0.625rem",
           },
         },
