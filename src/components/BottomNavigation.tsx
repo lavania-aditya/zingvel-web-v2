@@ -20,12 +20,16 @@ const BottomNavigation = () => {
   // Navigation items with their paths and icons - wrapped in useMemo to prevent unnecessary re-renders
   const navItems = useMemo(
     () => [
-      { label: "Home", path: "/", icon: <HomeIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} /> },
-      { label: "Packages", path: "/packages", icon: <LuggageIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} /> },
-      { label: "Wanderlists", path: "/wanderlists", icon: <WanderlistsIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} /> },
-      { label: "Inquiries", path: "/inquiries", icon: <InquiriesIcon sx={{ fontSize: "2rem", color: theme.palette.primary.main }} /> },
+      { label: "Home", path: "/", icon: <HomeIcon sx={{ fontSize: "1.8rem", mb: 1, color: theme.palette.secondary.main }} /> },
+      { label: "Packages", path: "/packages", icon: <LuggageIcon sx={{ fontSize: "1.8rem", mb: 1, color: theme.palette.secondary.main }} /> },
+      {
+        label: "Wanderlists",
+        path: "/wanderlists",
+        icon: <WanderlistsIcon sx={{ fontSize: "1.8rem", mb: 1, color: theme.palette.secondary.main }} />,
+      },
+      { label: "Inquiries", path: "/inquiries", icon: <InquiriesIcon sx={{ fontSize: "1.8rem", mb: 1, color: theme.palette.secondary.main }} /> },
     ],
-    [theme.palette.primary.main]
+    [theme.palette.secondary.main]
   );
 
   // Check if we should hide the bottom bar on certain pages
@@ -65,7 +69,8 @@ const BottomNavigation = () => {
         left: 0,
         right: 0,
         zIndex: 1000,
-        py: 4,
+        py: 1,
+        borderRadius: 0,
         // Ensure it's above other content but below modals
       }}
       elevation={3}
@@ -79,7 +84,7 @@ const BottomNavigation = () => {
         sx={{
           // py: 1, // Add vertical padding
           // backgroundColor: "blue",
-          height: "5rem",
+          height: "4rem",
           flexGrow: 1,
         }}
       >

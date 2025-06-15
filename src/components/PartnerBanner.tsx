@@ -28,15 +28,15 @@ export default function PartnerBanner() {
   }
 
   return (
-    <Container sx={{ my: 4 }}>
+    <Container>
       <Paper
         sx={{
           borderRadius: 3,
           overflow: "hidden",
           background: theme.palette.background.default,
           position: "relative",
-          border: "2px dashed",
-          borderColor: "primary.main",
+          // border: "2px dashed",
+          // borderColor: "primary.main",
         }}
       >
         <Box
@@ -108,7 +108,7 @@ export default function PartnerBanner() {
               justifyContent: "center",
             }}
           >
-            <HandshakeOutlined sx={{ fontSize: 120, color: "primary.main", opacity: 0.8 }} />
+            <HandshakeOutlined sx={{ fontSize: 120, color: "primary.main" }} />
           </Box>
         </Box>
       </Paper>

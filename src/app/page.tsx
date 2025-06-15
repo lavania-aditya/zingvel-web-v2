@@ -12,6 +12,9 @@ import { IWanderlistItem } from "@/interfaces/IWanderlist";
 import PartnerBannerWrapper from "@/components/PartnerBannerWrapper";
 import DownloadAppBanner from "@/components/DownloadAppBanner";
 import CreateWanderlistBanner from "@/components/CreateWanderlistBanner";
+import ExploreAllCta from "@/components/ExploreAllCta";
+import TravelPackageIcon from "@/components/icons/TravelPackageIcon";
+import WanderlistIcon from "@/components/icons/WanderlistIcon";
 
 export const metadata: Metadata = {
   title: "Zingvel | Discover Authentic Travel Experiences",
@@ -40,10 +43,10 @@ export default async function Home() {
         {/* Sticky Category Bar */}
         <CategoryBar categoriesData={categoriesData} />
         {/* Package Categories */}
-        <Container sx={{ mt: 2, mb: 4 }}>
+        <Container sx={{ my: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
             <Typography variant="h6" component="h2" fontWeight="bold">
-              Exlore Packages
+              Explore Packages
             </Typography>
             <Button size="small" variant="outlined">
               View All <ChevronRightIcon sx={{ fontSize: 20 }} />
@@ -56,16 +59,20 @@ export default async function Home() {
               </Grid>
             ))}
           </Grid>
+          
+          {/* Explore All Packages CTA */}
+          <ExploreAllCta 
+            title="Explore All Travel Packages" 
+            icon={<TravelPackageIcon fontSize="large" />} 
+            href="/packages" 
+          />
         </Container>
 
         {/* Create Wanderlist Banner */}
         <CreateWanderlistBanner />
 
-        {/* Partner Banner */}
-        <PartnerBannerWrapper />
-
         {/* Featured Destinations - App Style */}
-        <Container sx={{ mt: 2, mb: 4 }}>
+        <Container sx={{ my: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
             <Typography variant="h2" component="h2" fontWeight="bold">
               Popular Wanderlists
@@ -79,31 +86,35 @@ export default async function Home() {
               <Grid
                 key={wanderlist.id}
                 size={{ xs: 12, sm: 6, md: 4 }}
-                sx={
-                  {
-                    // width: "100%",
-                  }
-                }
+                sx={{}}
               >
-                {/* <Item> */}
                 <WanderlistCard wanderlistData={wanderlist} />
-                {/* </Item> */}
               </Grid>
             ))}
           </Grid>
+          
+          {/* Explore All Wanderlists CTA */}
+          <ExploreAllCta 
+            title="Discover All Wanderlists" 
+            icon={<WanderlistIcon fontSize="large" />} 
+            href="/wanderlists" 
+          />
         </Container>
 
         {/* Download App Banner */}
         <DownloadAppBanner />
 
         {/* Get in Touch Section */}
-        <Container sx={{ mt: 6, py: 4 }}>
+        <Container sx={{ my: 4 }}>
           <Card sx={{ borderRadius: 3, overflow: "hidden", boxShadow: 3 }}>
             <Box sx={{ p: { xs: 3, md: 5 } }}>
               <GetInTouchForm showTitle={true} showInquiryOptions={true} variant="full" />
             </Box>
           </Card>
         </Container>
+
+        {/* Partner Banner */}
+        <PartnerBannerWrapper />
       </Box>
     </>
   );

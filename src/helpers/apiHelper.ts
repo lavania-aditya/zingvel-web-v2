@@ -2,6 +2,7 @@
 import Cookies from "js-cookie";
 import { GetServerSidePropsContext } from "next";
 import { logError } from "@/utils/errorHandling";
+import { config } from "@/utils/config";
 
 type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 type ServiceName = keyof typeof BASE_URLS;
@@ -22,8 +23,8 @@ interface IApiHelper {
 }
 
 const BASE_URLS = {
-  wanderlist: "http://localhost:3434/api",
-  packages: "http://localhost:8082/api",
+  wanderlist: config.api.wanderlist,
+  packages: config.api.packages,
 };
 
 let logoutFn: (() => void) | null = null;

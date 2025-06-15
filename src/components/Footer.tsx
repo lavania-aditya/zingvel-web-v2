@@ -18,7 +18,7 @@ const Footer = () => {
         bgcolor: theme.palette.secondary.main,
         color: "white",
         // marginTop: 15,
-        paddingBottom: isMobileOrTablet ? "6rem" : "4rem",
+        paddingBottom: isMobileOrTablet ? "8rem" : "4rem",
         mt: 20,
       }}
     >
@@ -166,7 +166,9 @@ const Footer = () => {
             {currentYear} Zingvel. All rights reserved.
           </Typography>
         </Box> */}
-          <Box sx={{ display: "flex", mt: 1, gap: 2, justifyContent: "space-between", alignItems: "center" }}>
+          <Box
+            sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, mt: 1, gap: 2, justifyContent: "space-between", alignItems: "center" }}
+          >
             <Box
               component="a"
               href="https://apps.apple.com/app/zingvel"
@@ -178,12 +180,12 @@ const Footer = () => {
                 borderRadius: 2,
                 p: 1,
                 display: "flex",
-                // flexDirection: "column",
+                // flexDirection: { xs: "column", md: "row" },
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 1,
                 flex: 1,
-                // width: "45%",
+                width: "100%",
                 textDecoration: "none",
               }}
             >
@@ -203,12 +205,11 @@ const Footer = () => {
                 borderRadius: 2,
                 p: 1,
                 display: "flex",
-                // flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 1,
-                // width: "45%",
                 flex: 1,
+                width: "100%",
                 textDecoration: "none",
               }}
             >
@@ -246,19 +247,18 @@ const Footer = () => {
             mb: 2,
             maxWidth: "100%",
             objectFit: "contain",
-            filter: "brightness(0) invert(1)", // Make logo white
           }}
         />
 
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", mb: 3 }} />
-
-        <Typography variant="caption" color="rgba(255,255,255,0.7)">
-          {currentYear} Zingvel.com All rights reserved.
+        <Typography variant="subtitle2" color={theme.palette.grey[300]}>
+          &copy; {currentYear} Zingvel.com All rights reserved.
         </Typography>
+
+        <Divider sx={{ borderColor: theme.palette.grey[300], my: 2 }} />
 
         <Typography
           variant="caption"
-          color="rgba(255,255,255,0.5)"
+          color={theme.palette.grey[300]}
           sx={{ display: "block", mt: 1, fontSize: "0.7rem", maxWidth: "800px", mx: "auto" }}
         >
           The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content

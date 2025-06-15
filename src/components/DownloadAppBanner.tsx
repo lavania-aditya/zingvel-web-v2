@@ -21,8 +21,8 @@ export default function DownloadAppBanner() {
           borderRadius: 3,
           overflow: "hidden",
           backgroundColor: theme.palette.background.default,
-          border: "2px dashed",
-          borderColor: "primary.main",
+          // border: "2px dashed",
+          // borderColor: "primary.main",
           p: { xs: 3, md: 4 },
         }}
       >
@@ -35,11 +35,11 @@ export default function DownloadAppBanner() {
             mb: 3,
           }}
         >
-          <Typography variant="h5" component="h2" color="text.primary" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography variant="h5" component="h2" color={theme.palette.secondary.main} fontWeight="bold" sx={{ mb: 1 }}>
             Download the Zingvel App
           </Typography>
 
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2, maxWidth: "600px" }}>
+          <Typography variant="body1" color={theme.palette.secondary.main} sx={{ mb: 2, maxWidth: "600px" }}>
             Get the best travel experience with our mobile app. Book trips, manage itineraries, and discover new destinations on the go.
           </Typography>
         </Box>
@@ -59,6 +59,8 @@ export default function DownloadAppBanner() {
               display: "flex",
               alignItems: "center",
               backgroundColor: theme.palette.common.white,
+              borderColor: theme.palette.secondary.main,
+              border: "1px solid",
               borderRadius: 2,
               p: 1.5,
               px: 3,
@@ -88,6 +90,8 @@ export default function DownloadAppBanner() {
               display: "flex",
               alignItems: "center",
               backgroundColor: theme.palette.common.white,
+              borderColor: theme.palette.secondary.main,
+              border: "1px solid",
               borderRadius: 2,
               p: 1.5,
               px: 3,
